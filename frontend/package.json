@@ -1,0 +1,21 @@
+{
+  "name": "agriai-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "AgriAI — Offline AI Farming Intelligence Frontend",
+  "scripts": {
+    "dev": "vite --port 3000",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lucide-react": "^1.48.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.5.2",
+    "vite": "^6.3.5"
+  }
+}

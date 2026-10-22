@@ -1,0 +1,1682 @@
+/* ============================================================
+   AgriAI — Complete Design System & Animation Engine
+   Warm Cream & Agricultural Emerald Palette
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&display=swap');
+
+:root {
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+
+  /* Palette: Warm Cream + Deep Agricultural Greens */
+  --bg-page: #fbfaf6;
+  --bg-page-alt: #f4f1ea;
+  --bg-dark-hero: #0c1c10;
+  --bg-card: #ffffff;
+  --bg-card-glass: rgba(255, 255, 255, 0.88);
+  
+  --color-green-dark: #0f381e;
+  --color-green-main: #166534;
+  --color-green-light: #22c55e;
+  --color-green-subtle: #dcfce7;
+  
+  --color-lime: #84cc16;
+  --color-lime-bright: #a3e635;
+  --color-lime-hover: #65a30d;
+  
+  --color-gold: #eab308;
+  --color-gold-subtle: #fef9c3;
+  
+  --text-dark: #111827;
+  --text-muted: #4b5563;
+  --text-light: #f9fafb;
+  --text-light-muted: #9ca3af;
+  
+  --border-light: #e5e7eb;
+  --border-green: #bbf7d0;
+  --border-subtle: rgba(22, 101, 52, 0.15);
+
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 2px 8px rgba(15, 56, 30, 0.04);
+  --shadow-card: 0 10px 30px -5px rgba(15, 56, 30, 0.06), 0 2px 8px -2px rgba(15, 56, 30, 0.04);
+  --shadow-hover: 0 20px 40px -10px rgba(15, 56, 30, 0.12), 0 4px 12px -2px rgba(15, 56, 30, 0.06);
+  --shadow-glow: 0 0 25px rgba(132, 204, 22, 0.35);
+
+  --transition-fast: 0.18s ease;
+  --transition-normal: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-page);
+  color: var(--text-dark);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Typography Helpers */
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-serif-italic {
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-page);
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Base Button & Link Interactions */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: all var(--transition-normal);
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+.nav-link-btn {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius-xs);
+  transition: color var(--transition-fast);
+}
+
+.nav-link-btn:hover {
+  color: var(--color-green-main);
+}
+
+.mobile-nav-link {
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: #f8fafc;
+}
+
+.mobile-nav-link.active {
+  background: var(--color-green-subtle);
+  color: var(--color-green-dark);
+  font-weight: 700;
+}
+
+/* Brand Area Hover Glow */
+.navbar-brand-wrapper:hover .brand-icon-box {
+  transform: scale(1.06) translateY(-1px);
+  box-shadow: 0 6px 18px rgba(34, 197, 94, 0.4);
+}
+
+input, textarea, select {
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--color-green-main) !important;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2) !important;
+}
+
+/* Keyframe Animations */
+@keyframes navbarEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dropdownScale {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+  }
+}
+
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+/* Hero Floating Panel Animations & Motion */
+@keyframes heroPanelEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes scrollIndicatorFloat {
+  0%, 100% {
+    transform: translateY(0px);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translateY(4px);
+    opacity: 1;
+  }
+}
+
+/* Ambient Sunlight Glow & Dappled Leaf Shadow Keyframes (Stable Opacity Only - No Scroll/Translate Jumps) */
+@keyframes sunlightDrift {
+  0% {
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0.65;
+  }
+}
+
+@keyframes leafShadowBreathe {
+  0% {
+    opacity: 0.08;
+  }
+  50% {
+    opacity: 0.11;
+  }
+  100% {
+    opacity: 0.08;
+  }
+}
+
+.animate-eyebrow {
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.06s both;
+}
+
+.animate-heading-1 {
+  animation: fadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.14s both;
+}
+
+.animate-heading-2 {
+  animation: fadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both;
+}
+
+.animate-hero-desc {
+  animation: fadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.34s both;
+}
+
+.animate-hero-actions {
+  animation: fadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.44s both;
+}
+
+/* Scroll-Linked Box Motion */
+.scroll-reveal-box {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+/* Hero Responsive Queries */
+@media (max-width: 1024px) {
+  .hero-viewport-section {
+    padding: 1.5rem 1rem 2.5rem !important;
+    min-height: auto !important;
+  }
+  .floating-hero-panel {
+    width: 100% !important;
+    border-radius: 24px !important;
+    min-height: auto !important;
+  }
+  .hero-inner-columns {
+    flex-direction: column !important;
+    padding: 2.5rem 1.5rem 2.5rem !important;
+    gap: 2.25rem !important;
+    text-align: center;
+  }
+  .hero-left-column {
+    max-width: 100% !important;
+    align-items: center;
+  }
+  .hero-btn-row {
+    justify-content: center;
+  }
+  .floating-3d-crop-container {
+    max-width: 320px !important;
+    height: 320px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .floating-hero-panel {
+    border-radius: 18px !important;
+  }
+  .hero-inner-columns {
+    padding: 1.5rem 1rem 2rem !important;
+  }
+  .floating-3d-crop-container {
+    max-width: 260px !important;
+    height: 260px !important;
+  }
+  .hero-btn-row {
+    flex-direction: column;
+    width: 100%;
+  }
+  .hero-btn-row button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Glass Panels */
+.glass-panel {
+  background: var(--bg-card-glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: var(--shadow-card);
+}
+
+.glass-dark {
+  background: rgba(12, 28, 16, 0.76);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+/* Chat Input Pill Container Focus State */
+.chat-input-pill-container:focus-within {
+  border-color: var(--color-green-main) !important;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18) !important;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 960px) {
+  .desktop-nav-links {
+    display: none !important;
+  }
+  .desktop-dashboard-tabs {
+    display: none !important;
+  }
+  .mobile-hamburger-btn {
+    display: flex !important;
+  }
+  .mobile-history-toggle-btn {
+    display: flex !important;
+  }
+  .mobile-history-header-row {
+    display: flex !important;
+  }
+  .chat-history-sidebar {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 280px !important;
+    max-width: 85% !important;
+    z-index: 950 !important;
+    transform: translateX(-100%) !important;
+    background: #ffffff !important;
+    box-shadow: 0 10px 40px rgba(15, 56, 30, 0.22) !important;
+    border-right: 1px solid rgba(22, 101, 52, 0.12) !important;
+  }
+  .chat-history-sidebar.mobile-open {
+    transform: translateX(0) !important;
+  }
+
+  /* Split Login on Tablet/Mobile */
+  .split-login-container {
+    flex-direction: column !important;
+  }
+  .split-login-visual {
+    display: none !important;
+  }
+  .split-login-form-side {
+    flex: 1 1 100% !important;
+    padding: 1.5rem 1.25rem !important;
+    min-height: 100vh !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .desktop-auth-buttons {
+    display: none !important;
+  }
+  .user-name-display {
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .chat-main-container {
+    border-radius: 18px !important;
+    height: 560px !important;
+  }
+}
+
+/* ============================================================
+   How AgriAI Works — 5-Step Journey Styles
+   ============================================================ */
+.how-it-works-flow-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.how-it-works-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.15rem;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 1024px) {
+  .flow-connecting-line-desktop {
+    display: none !important;
+  }
+  .how-it-works-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.15rem !important;
+  }
+}
+
+/* ============================================================
+   Real-Time Weather — Premium Glassmorphism Design
+   ============================================================ */
+.weather-glass-container {
+  position: relative;
+  width: 100%;
+  border-radius: 26px;
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.weather-glass-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 20px 48px -12px rgba(15, 56, 30, 0.09),
+    0 4px 16px -2px rgba(15, 56, 30, 0.04),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.85);
+  border-radius: 26px;
+  padding: 1.35rem 1.65rem;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.weather-glass-reflection {
+  position: absolute;
+  top: -50%;
+  left: -100%;
+  width: 60%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(255, 255, 255, 0.08) 60%,
+    transparent 100%
+  );
+  transform: rotate(25deg);
+  pointer-events: none;
+  animation: weatherGlassGleam 14s ease-in-out infinite;
+  z-index: 3;
+}
+
+@keyframes weatherGlassGleam {
+  0%, 75% {
+    left: -100%;
+    opacity: 0;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    left: 220%;
+    opacity: 0;
+  }
+}
+
+.weather-atm-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 26px;
+  z-index: 1;
+  transition: opacity 0.8s ease;
+}
+
+.weather-atm-clear {
+  background: radial-gradient(circle at 18% 25%, rgba(254, 240, 138, 0.42) 0%, rgba(253, 224, 71, 0.15) 35%, transparent 70%),
+              radial-gradient(circle at 85% 80%, rgba(34, 197, 94, 0.12) 0%, transparent 60%);
+}
+
+.weather-atm-cloudy {
+  background: radial-gradient(circle at 20% 30%, rgba(226, 232, 240, 0.55) 0%, rgba(203, 213, 225, 0.22) 40%, transparent 70%),
+              radial-gradient(circle at 85% 75%, rgba(187, 247, 208, 0.16) 0%, transparent 55%);
+}
+
+.weather-atm-rain {
+  background: radial-gradient(circle at 20% 25%, rgba(186, 230, 253, 0.45) 0%, rgba(147, 197, 253, 0.18) 40%, transparent 70%),
+              radial-gradient(circle at 80% 80%, rgba(167, 243, 208, 0.2) 0%, transparent 60%);
+}
+
+.weather-atm-thunder {
+  background: radial-gradient(circle at 20% 20%, rgba(203, 213, 225, 0.5) 0%, rgba(148, 163, 184, 0.2) 40%, transparent 70%),
+              radial-gradient(circle at 85% 85%, rgba(163, 230, 53, 0.15) 0%, transparent 60%);
+}
+
+.weather-metric-chip {
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(22, 101, 52, 0.08);
+  border-radius: 16px;
+  padding: 0.75rem 0.95rem;
+  box-shadow: 0 2px 6px rgba(15, 56, 30, 0.03);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.weather-metric-chip:hover {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(22, 101, 52, 0.18);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 56, 30, 0.06);
+}
+
+.weather-live-indicator {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 8px;
+  height: 8px;
+}
+
+.weather-live-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #16a34a;
+  border-radius: 50%;
+}
+
+.weather-live-ping {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background-color: rgba(34, 197, 94, 0.4);
+  border-radius: 50%;
+  animation: weatherPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes weatherPing {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.8;
+  }
+  80%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.weather-refresh-icon.spinning {
+  animation: weatherSpin 0.75s linear infinite;
+}
+
+@keyframes weatherSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.weather-radar-pulse {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.2) 0%, rgba(22, 101, 52, 0.05) 60%, transparent 80%);
+  animation: weatherRadarWave 2.2s ease-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes weatherRadarWave {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.weather-main-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.weather-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 0.65rem;
+}
+
+@media (max-width: 840px) {
+  .weather-main-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .weather-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .weather-glass-card {
+    padding: 1.15rem 1.15rem;
+    border-radius: 20px;
+  }
+  .weather-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+}
+
+/* ============================================================
+   AgriAI Premium 3D Glass Weather Widget Styles & Animations
+   ============================================================ */
+.agri-glass-weather-widget {
+  will-change: transform, box-shadow;
+}
+
+.agri-glass-weather-widget:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 24px 48px -12px rgba(15, 56, 30, 0.14), 0 6px 16px -2px rgba(15, 56, 30, 0.06), inset 0 1px 3px rgba(255, 255, 255, 1) !important;
+}
+
+.agri-glass-weather-widget.offline-mode:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px -10px rgba(51, 65, 85, 0.12), 0 4px 12px -2px rgba(51, 65, 85, 0.04) !important;
+}
+
+@keyframes sunFloat {
+  0% {
+    transform: translateY(0px) scale(1);
+  }
+  100% {
+    transform: translateY(-4px) scale(1.03);
+  }
+}
+
+@keyframes sunPulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.15);
+    opacity: 0.9;
+  }
+}
+
+@keyframes sunRaysSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes cloudDrift {
+  0% {
+    transform: translateX(0px) translateY(0px);
+  }
+  100% {
+    transform: translateX(4px) translateY(-2px);
+  }
+}
+
+@keyframes rainDropAnim {
+  0% {
+    transform: translateY(-6px);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+}
+
+@keyframes thunderGleam {
+  0%, 80%, 100% {
+    opacity: 0.2;
+    transform: scale(0.95);
+    filter: drop-shadow(0 0 0 transparent);
+  }
+  85%, 89% {
+    opacity: 1;
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.8));
+  }
+  87% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes fogFloat {
+  0% {
+    transform: translateX(-4px);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(4px);
+    opacity: 0.9;
+  }
+}
+
+@keyframes livePulse {
+  0% {
+    transform: scale(0.9);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
+  }
+  70% {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+  }
+  100% {
+    transform: scale(0.9);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+@keyframes weatherRefreshSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* AgriAI Dashboard Page Background & Layout (Visually Stable Full-Height Background) */
+.dashboard-page-wrapper {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(175deg, #F8F7EF 0%, #F1F5EA 48%, #F7F4E9 100%);
+  overflow-x: hidden;
+}
+
+.dashboard-bg-photo-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  background-image: url('/images/hero.jpg');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  opacity: 0.07;
+  filter: blur(3px) saturate(0.85);
+  mask-image: radial-gradient(ellipse 75% 65% at 50% 50%, transparent 42%, black 100%);
+  -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 50%, transparent 42%, black 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dashboard-sunlight-drift {
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dashboard-leaf-shadow {
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dashboard-content-container {
+  max-width: 1220px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 5;
+}
+
+/* Panoramic Hero Banner with Natural Farm Visuals */
+.dashboard-panoramic-hero {
+  position: relative;
+  width: 100%;
+  background-image: url('/images/dashboard-hero-banner.jpg');
+  background-size: cover;
+  background-position: center 38%;
+  background-repeat: no-repeat;
+  padding: 1.75rem 1.5rem 3.75rem;
+  overflow: hidden;
+  box-shadow: 0 10px 30px -10px rgba(15, 56, 30, 0.08);
+}
+
+.dashboard-panoramic-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.94) 0%,
+    rgba(255, 255, 255, 0.82) 42%,
+    rgba(255, 255, 255, 0.35) 75%,
+    rgba(255, 255, 255, 0.15) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dashboard-hero-content-wrapper {
+  position: relative;
+  z-index: 3;
+  max-width: 1220px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.dashboard-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 390px;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-hero-grid {
+    grid-template-columns: 1fr 350px;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 860px) {
+  .dashboard-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .dashboard-panoramic-overlay {
+    background: rgba(255, 255, 255, 0.9);
+  }
+}
+
+.dashboard-benefit-pills {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.15rem;
+}
+
+.benefit-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.42rem 1rem;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(22, 101, 52, 0.15);
+  color: #166534;
+  font-size: 0.84rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(15, 56, 30, 0.05);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: default;
+}
+
+.benefit-pill:hover {
+  background: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 56, 30, 0.1);
+  border-color: rgba(22, 101, 52, 0.25);
+}
+
+.dashboard-wave-divider {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 42px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.dashboard-welcome-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.dashboard-welcome-heading {
+  font-family: var(--font-sans);
+  font-size: 1.95rem; /* ~31px */
+  font-weight: 800;
+  color: var(--color-green-dark);
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  margin: 0 0 0.4rem 0;
+}
+
+.dashboard-welcome-sub {
+  font-family: var(--font-sans);
+  font-size: 0.96rem; /* ~15px */
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.dashboard-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  background: var(--color-green-subtle);
+  border: 1px solid var(--border-green);
+  color: var(--color-green-dark);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  width: fit-content;
+  margin-bottom: 0.6rem;
+}
+
+/* Standardized Form Input Tokens */
+.agri-input-field {
+  width: 100%;
+  height: 44px;
+  padding: 0 0.95rem;
+  border-radius: 12px;
+  border: 1.5px solid #cbd5e1;
+  background: #f8fafc;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #0f172a;
+  transition: all 0.2s ease;
+}
+
+.agri-input-field:focus {
+  background: #ffffff;
+  border-color: var(--color-green-main) !important;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18) !important;
+}
+
+.agri-input-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.01em;
+}
+
+.agri-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 48px;
+  padding: 0 1.75rem;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #0f381e 0%, #166534 100%);
+  color: #ffffff;
+  font-size: 0.96rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(15, 56, 30, 0.22);
+  transition: all 0.2s ease;
+}
+
+.agri-btn-primary:hover {
+  background: linear-gradient(135deg, #144727 0%, #15803d 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(15, 56, 30, 0.28);
+}
+
+.agri-btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Dashboard Dual Features Grid (Crop & Leaf) */
+.dashboard-dual-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-dual-features-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-content-container {
+    padding: 1rem 0.75rem 2rem !important;
+  }
+  .dashboard-features-section {
+    padding: 1rem 0.75rem 3rem !important;
+  }
+  .chat-main-container {
+    height: 580px !important;
+    border-radius: 18px !important;
+  }
+  .crop-card-grid,
+  .leaf-card-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+}
+
+/* ============================================================
+   AgriAI — Premium Login / Register Page
+   ============================================================ */
+
+/* ---- Page Container (50/50 Split, Viewport-Locked) ---- */
+.login-page {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+  background: #FAF8F2;
+}
+
+/* ---- LEFT PANEL ---- */
+.login-left {
+  flex: 1 1 50%;
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.login-left-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('/images/farmer.jpg');
+  background-size: cover;
+  background-position: center 30%;
+  filter: saturate(1.1) contrast(1.05);
+  transform: scale(1.02);
+  z-index: 1;
+}
+
+.login-left-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    168deg,
+    rgba(8, 26, 14, 0.82) 0%,
+    rgba(14, 50, 26, 0.7) 40%,
+    rgba(6, 18, 10, 0.86) 100%
+  );
+  z-index: 2;
+}
+
+/* Floating leaf silhouettes */
+.login-leaf {
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+}
+.login-leaf img {
+  width: 100%;
+  height: auto;
+  filter: brightness(0) invert(1);
+  opacity: 0.09;
+}
+.login-leaf--1 {
+  top: 14%;
+  right: 8%;
+  width: 110px;
+  animation: loginLeafDrift 20s ease-in-out infinite;
+}
+.login-leaf--2 {
+  bottom: 18%;
+  left: 6%;
+  width: 80px;
+  animation: loginLeafDrift 26s ease-in-out 4s infinite reverse;
+}
+
+@keyframes loginLeafDrift {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-10px) rotate(4deg); }
+}
+
+/* Left content layer */
+.login-left-content {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 2.5rem 3rem;
+  color: #fff;
+}
+
+/* Logo */
+.login-left-logo img {
+  width: 160px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25));
+}
+
+/* Hero text */
+.login-left-hero {
+  max-width: 480px;
+}
+
+.login-quote {
+  font-family: var(--font-sans);
+  font-size: clamp(2.6rem, 3.6vw, 3.5rem);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  color: #fff;
+  margin: 0 0 1.1rem 0;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.25);
+}
+
+.login-quote-accent {
+  color: #86efac;
+}
+
+.login-tagline {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #e2e8f0;
+  line-height: 1.55;
+  margin: 0 0 0.65rem 0;
+}
+
+.login-description {
+  font-size: 0.92rem;
+  font-weight: 400;
+  color: #a1b5a8;
+  line-height: 1.55;
+  margin: 0 0 1.5rem 0;
+}
+
+/* Feature pills */
+.login-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.login-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.38rem 0.9rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.login-pill:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
+
+/* Left footer */
+.login-left-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.login-left-footer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: #86efac;
+  font-size: 0.78rem;
+}
+
+.login-privacy-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  display: inline-block;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.5);
+}
+
+/* ---- RIGHT PANEL ---- */
+.login-right {
+  flex: 1 1 50%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 2.5rem;
+  background: #FDFCF9;
+  position: relative;
+  overflow-y: auto;
+}
+
+/* Top bar: back + language */
+.login-right-topbar {
+  position: absolute;
+  top: 1.25rem;
+  left: 2rem;
+  right: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10;
+}
+
+.login-back-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.95rem;
+  border-radius: 9999px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.login-back-pill:hover {
+  color: #166534;
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  transform: translateX(-2px);
+}
+
+/* ---- LOGIN CARD ---- */
+.login-card {
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  border: 1px solid rgba(22, 101, 52, 0.1);
+  border-radius: 26px;
+  padding: 2.5rem 2.5rem 2rem;
+  box-shadow:
+    0 8px 32px -8px rgba(15, 56, 30, 0.06),
+    0 2px 8px -2px rgba(15, 56, 30, 0.03);
+  animation: loginCardEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes loginCardEnter {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Card header */
+.login-card-header {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.login-emblem-box {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1.5px solid rgba(22, 101, 52, 0.12);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  margin-bottom: 0.85rem;
+  box-shadow: 0 2px 10px rgba(22, 101, 52, 0.08);
+}
+
+.login-emblem-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.login-card-title {
+  font-family: var(--font-sans);
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #0f381e;
+  line-height: 1.2;
+  margin: 0 0 0.3rem 0;
+  letter-spacing: -0.025em;
+}
+
+.login-card-subtitle {
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* Error */
+.login-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 0.65rem 1rem;
+  border-radius: 12px;
+  font-size: 0.84rem;
+  font-weight: 500;
+  margin-bottom: 1.15rem;
+  animation: fadeIn 0.25s ease;
+}
+
+/* Form */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Field */
+.login-field label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 650;
+  color: #374151;
+  margin-bottom: 0.35rem;
+  letter-spacing: -0.01em;
+}
+
+.login-field input,
+.login-field select {
+  width: 100%;
+  height: 48px;
+  padding: 0 1rem;
+  border-radius: 13px;
+  border: 1.5px solid #dde1e6;
+  background: #FAFAF7;
+  color: #111827;
+  font-size: 0.94rem;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.login-field input:focus,
+.login-field select:focus {
+  background: #fff;
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+}
+
+.login-field input::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.login-field select {
+  cursor: pointer;
+}
+
+/* Password wrapper */
+.login-field-password {
+  position: relative;
+}
+
+.login-field-password input {
+  width: 100%;
+  padding-right: 3.2rem;
+}
+
+.login-show-toggle {
+  position: absolute;
+  right: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 4px;
+  transition: color 0.15s ease;
+}
+
+.login-show-toggle:hover {
+  color: #166534;
+  transform: translateY(-50%);
+}
+
+/* Submit button */
+.login-submit {
+  width: 100%;
+  height: 54px;
+  margin-top: 0.35rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #14532d 0%, #166534 50%, #15803d 100%);
+  color: #fff;
+  font-size: 0.96rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(21, 83, 45, 0.22);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.login-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(21, 83, 45, 0.32);
+  filter: brightness(1.06);
+}
+
+.login-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Toggle row */
+.login-toggle-row {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid #f1f5f9;
+  font-size: 0.86rem;
+  color: #64748b;
+}
+
+.login-toggle-link {
+  color: #166534;
+  font-weight: 700;
+  font-size: 0.86rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-left: 0.25rem;
+  transition: color 0.15s ease;
+}
+
+.login-toggle-link:hover {
+  color: #15803d;
+  transform: none;
+}
+
+/* Bottom privacy */
+.login-right-privacy {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.76rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+/* ---- RESPONSIVE ---- */
+
+/* Tablet: 45/55 split */
+@media (max-width: 1100px) {
+  .login-left  { flex: 1 1 45%; }
+  .login-right { flex: 1 1 55%; }
+  .login-left-content { padding: 2rem 2.25rem; }
+  .login-quote { font-size: clamp(2rem, 3.2vw, 2.8rem); }
+}
+
+/* Stack on mobile */
+@media (max-width: 850px) {
+  .login-page {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .login-left {
+    flex: 0 0 auto;
+    height: auto;
+    min-height: auto;
+  }
+
+  .login-left-content {
+    padding: 2rem 1.5rem 1.5rem;
+  }
+
+  .login-left-logo img {
+    width: 120px;
+  }
+
+  .login-left-hero {
+    margin-top: 1rem;
+  }
+
+  .login-quote {
+    font-size: 1.75rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .login-tagline {
+    font-size: 0.92rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .login-description {
+    display: none;
+  }
+
+  .login-left-footer {
+    display: none;
+  }
+
+  .login-right {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: auto;
+    padding: 1.5rem 1.25rem 3rem;
+    overflow-y: visible;
+  }
+
+  .login-right-topbar {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    margin-bottom: 1.25rem;
+  }
+
+  .login-card {
+    padding: 1.75rem 1.5rem 1.5rem;
+    border-radius: 22px;
+  }
+
+  .login-right-privacy {
+    position: relative;
+    bottom: auto;
+    margin-top: 1.5rem;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .login-left-content {
+    padding: 1.5rem 1.15rem 1.25rem;
+  }
+  .login-card {
+    padding: 1.5rem 1.25rem 1.25rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 16px -4px rgba(15, 56, 30, 0.06);
+  }
+  .login-right {
+    padding: 1rem 1rem 2.5rem;
+  }
+}
+
+/* Accessibility: prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .dashboard-sunlight-drift,
+  .dashboard-leaf-shadow,
+  .weather-glass-reflection,
+  .agri-weather-art-box,
+  .rain-drop,
+  .weather-refresh-spin,
+  .login-leaf--1,
+  .login-leaf--2 {
+    animation: none !important;
+    transform: none !important;
+  }
+}

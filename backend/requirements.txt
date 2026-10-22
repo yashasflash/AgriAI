@@ -1,0 +1,12 @@
+# AgriAI Backend Python Dependencies
+fastapi>=0.110.0
+uvicorn>=0.28.0
+pydantic>=2.6.0
+requests>=2.31.0
+joblib>=1.3.0
+pandas>=2.2.0
+numpy>=1.26.0
+pillow>=10.2.0
+tensorflow>=2.16.0
+scikit-learn>=1.4.0
+python-multipart>=0.0.9
