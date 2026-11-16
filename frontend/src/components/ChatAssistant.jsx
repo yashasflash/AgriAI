@@ -12,6 +12,7 @@ import {
   deleteConversation,
   clearChatHistory
 } from '../services/api';
+import assetPath from '../utils/assetPath';
 
 export default function ChatAssistant({ user, onSelectTab }) {
   const { language, t } = useTranslation();
@@ -315,7 +316,7 @@ export default function ChatAssistant({ user, onSelectTab }) {
                 }}
               >
                 <img
-                  src="/images/agriai-emblem-transparent.png"
+                  src={assetPath("/images/agriai-emblem-transparent.png")}
                   alt="AgriAI Assistant"
                   style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                 />
@@ -431,7 +432,7 @@ export default function ChatAssistant({ user, onSelectTab }) {
                   }}
                 >
                   <img
-                    src="/images/agriai-emblem-transparent.png"
+                    src={assetPath("/images/agriai-emblem-transparent.png")}
                     alt="AgriAI Assistant"
                     style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                   />

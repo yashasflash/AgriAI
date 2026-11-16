@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from '../i18n';
 import LanguageSelector from '../components/LanguageSelector';
 import { registerUser } from '../services/api';
+import assetPath from '../utils/assetPath';
 
 export default function RegisterPage({ onLogin, onNavigate, onBack }) {
   const { language, setLanguage, t } = useTranslation();
@@ -54,7 +55,7 @@ export default function RegisterPage({ onLogin, onNavigate, onBack }) {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '2rem 1.5rem',
-        backgroundImage: `url('/images/login-bg.jpg')`,
+        backgroundImage: `url('${assetPath("/images/login-bg.jpg")}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         overflow: 'hidden'

@@ -7,6 +7,7 @@ import HowItWorks from '../components/HowItWorks';
 import Technology from '../components/Technology';
 import CinematicFallingLeaf from '../components/motion/CinematicFallingLeaf';
 import ScrollReveal from '../components/motion/ScrollReveal';
+import assetPath from '../utils/assetPath';
 
 export default function LandingPage({ onGetStarted }) {
   const { t } = useTranslation();
@@ -51,7 +52,7 @@ export default function LandingPage({ onGetStarted }) {
           style={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: `url('/images/hero.jpg')`,
+            backgroundImage: `url('${assetPath("/images/hero.jpg")}')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             opacity: 0.18,

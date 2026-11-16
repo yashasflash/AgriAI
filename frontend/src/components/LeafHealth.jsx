@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from '../i18n';
 import LoadingState from './LoadingState';
 import { checkLeaf } from '../services/api';
+import assetPath from '../utils/assetPath';
 
 export default function LeafHealth() {
   const { t } = useTranslation();
@@ -89,7 +90,7 @@ export default function LeafHealth() {
           }}
         >
           <img
-            src="/images/agriai-emblem-transparent.png"
+            src={assetPath("/images/agriai-emblem-transparent.png")}
             alt="AgriAI Leaf Health"
             style={{ width: '100%', height: '100%', objectFit: 'contain' }}
           />
@@ -284,7 +285,7 @@ export default function LeafHealth() {
           {/* Leaf Illustration */}
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center', margin: '0.25rem 0' }}>
             <img
-              src="/images/real-leaf-2.png"
+              src={assetPath("/images/real-leaf-2.png")}
               alt="Leaf Pathology"
               style={{
                 maxHeight: '120px',

@@ -1,4 +1,5 @@
 import React from 'react';
+import assetPath from '../utils/assetPath';
 
 export default function ChatMessage({ sender, text, timestamp }) {
   const isUser = sender === 'user';
@@ -36,7 +37,7 @@ export default function ChatMessage({ sender, text, timestamp }) {
           '👤'
         ) : (
           <img
-            src="/images/agriai-emblem-transparent.png"
+            src={assetPath("/images/agriai-emblem-transparent.png")}
             alt="AgriAI"
             style={{ width: '100%', height: '100%', objectFit: 'contain' }}
           />

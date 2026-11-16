@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from '../i18n';
 import { getOrAssignUserAvatar } from '../services/avatar';
+import assetPath from '../utils/assetPath';
 
 export default function MyProfileModal({ isOpen, onClose, user, onLogout }) {
   const { t } = useTranslation();
@@ -149,7 +150,7 @@ export default function MyProfileModal({ isOpen, onClose, user, onLogout }) {
             }}
           >
             <img
-              src="/images/agriai-emblem-transparent.png"
+              src={assetPath("/images/agriai-emblem-transparent.png")}
               alt="AgriAI"
               style={{ width: '16px', height: '16px', objectFit: 'contain' }}
             />

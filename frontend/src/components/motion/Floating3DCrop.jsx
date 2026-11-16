@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import assetPath from '../../utils/assetPath';
 
 /**
  * Floating3DCrop: A photorealistic agricultural seedling crop floating in 3D space.
@@ -157,7 +158,7 @@ export default function Floating3DCrop({ scrollY = 0, isDesktop = true }) {
           }}
         >
           <img
-            src="/images/real-crop-plant.png"
+            src={assetPath("/images/real-crop-plant.png")}
             alt="Photorealistic Agricultural Crop Plant"
             style={{
               width: '100%',

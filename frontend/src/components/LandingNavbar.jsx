@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from '../i18n';
 import LanguageSelector from './LanguageSelector';
+import assetPath from '../utils/assetPath';
 
 export default function LandingNavbar({ onNavigate, onGetStarted }) {
   const { t } = useTranslation();
@@ -141,7 +142,7 @@ export default function LandingNavbar({ onNavigate, onGetStarted }) {
           onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
         >
           <img
-            src="/images/agriai-logo-full-transparent.png"
+            src={assetPath("/images/agriai-logo-full-transparent.png")}
             alt="AgriAI - Offline AI Farming Platform"
             style={{
               height: '42px',

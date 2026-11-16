@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from '../i18n';
 import LoadingState from './LoadingState';
 import { recommendCrop } from '../services/api';
+import assetPath from '../utils/assetPath';
 
 export default function CropRecommendation() {
   const { t } = useTranslation();
@@ -80,7 +81,7 @@ export default function CropRecommendation() {
           }}
         >
           <img
-            src="/images/agriai-emblem-transparent.png"
+            src={assetPath("/images/agriai-emblem-transparent.png")}
             alt="AgriAI Crop Advisory"
             style={{ width: '100%', height: '100%', objectFit: 'contain' }}
           />
@@ -284,7 +285,7 @@ export default function CropRecommendation() {
           {/* Sprout Image */}
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center', margin: '0.25rem 0' }}>
             <img
-              src="/images/real-crop-plant.png"
+              src={assetPath("/images/real-crop-plant.png")}
               alt="Crop Sprout"
               style={{
                 maxHeight: '120px',

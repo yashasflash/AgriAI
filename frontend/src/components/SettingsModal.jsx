@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from '../i18n';
+import assetPath from '../utils/assetPath';
 
 export const WEATHER_MODE_STORAGE_KEY = 'agriai_weather_mode';
 
@@ -104,7 +105,7 @@ export default function SettingsModal({ isOpen, onClose, user, onOpenProfile, on
               }}
             >
               <img
-                src="/images/agriai-emblem-transparent.png"
+                src={assetPath("/images/agriai-emblem-transparent.png")}
                 alt="AgriAI"
                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
               />

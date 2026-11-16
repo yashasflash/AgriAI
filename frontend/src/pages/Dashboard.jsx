@@ -7,6 +7,7 @@ import CropRecommendation from '../components/CropRecommendation';
 import LeafHealth from '../components/LeafHealth';
 import MyProfileModal from '../components/MyProfileModal';
 import SettingsModal from '../components/SettingsModal';
+import assetPath from '../utils/assetPath';
 
 export default function Dashboard({ user, activeTab: externalTab = 'chat', onTabChange: externalTabChange, onUserUpdated, onLogout }) {
   const { t } = useTranslation();
@@ -99,7 +100,7 @@ export default function Dashboard({ user, activeTab: externalTab = 'chat', onTab
           width: '100%',
           height: '100%',
           minHeight: '100%',
-          backgroundImage: `url('/images/hero.jpg')`,
+          backgroundImage: `url('${assetPath("/images/hero.jpg")}')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center top',
           backgroundRepeat: 'no-repeat',
@@ -167,7 +168,7 @@ export default function Dashboard({ user, activeTab: externalTab = 'chat', onTab
         }}
       >
         <img
-          src="/images/real-leaf-1.png"
+          src={assetPath("/images/real-leaf-1.png")}
           alt=""
           style={{
             width: '100%',
@@ -419,7 +420,7 @@ export default function Dashboard({ user, activeTab: externalTab = 'chat', onTab
           }}
         >
           <img
-            src="/images/real-leaf-3.png"
+            src={assetPath("/images/real-leaf-3.png")}
             alt=""
             style={{ width: '100%', height: 'auto', transform: 'rotate(-25deg)' }}
           />
@@ -440,7 +441,7 @@ export default function Dashboard({ user, activeTab: externalTab = 'chat', onTab
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <img
-              src="/images/agriai-logo-full-transparent.png"
+              src={assetPath("/images/agriai-logo-full-transparent.png")}
               alt="AgriAI - Offline AI Farming Platform"
               style={{
                 height: '36px',

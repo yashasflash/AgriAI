@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from '../i18n';
+import assetPath from '../utils/assetPath';
 
 export default function Footer({ onNavigate }) {
   const { t } = useTranslation();
@@ -61,7 +62,7 @@ export default function Footer({ onNavigate }) {
                 }}
               >
                 <img
-                  src="/images/agriai-logo-full-transparent.png"
+                  src={assetPath("/images/agriai-logo-full-transparent.png")}
                   alt="AgriAI Logo"
                   style={{ height: '38px', width: 'auto', objectFit: 'contain', display: 'block' }}
                 />

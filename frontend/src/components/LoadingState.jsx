@@ -1,4 +1,5 @@
 import React from 'react';
+import assetPath from '../utils/assetPath';
 
 export default function LoadingState({ message = 'Loading...', full = false }) {
   if (full) {
@@ -29,7 +30,7 @@ export default function LoadingState({ message = 'Loading...', full = false }) {
           }}
         >
           <img
-            src="/images/agriai-emblem-transparent.png"
+            src={assetPath("/images/agriai-emblem-transparent.png")}
             alt="AgriAI Loading"
             style={{ width: '100%', height: '100%', objectFit: 'contain' }}
           />
@@ -69,7 +70,7 @@ export default function LoadingState({ message = 'Loading...', full = false }) {
         }}
       >
         <img
-          src="/images/agriai-emblem-transparent.png"
+          src={assetPath("/images/agriai-emblem-transparent.png")}
           alt="AgriAI"
           style={{ width: '100%', height: '100%', objectFit: 'contain' }}
         />

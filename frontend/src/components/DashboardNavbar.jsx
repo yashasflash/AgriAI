@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from '../i18n';
 import { getOrAssignUserAvatar } from '../services/avatar';
+import assetPath from '../utils/assetPath';
 
 export default function DashboardNavbar({
   user,
@@ -83,7 +84,7 @@ export default function DashboardNavbar({
             }}
           >
             <img
-              src="/images/agriai-emblem-transparent.png"
+              src={assetPath("/images/agriai-emblem-transparent.png")}
               alt="AgriAI Emblem"
               style={{
                 width: '100%',

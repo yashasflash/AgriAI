@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from '../i18n';
 import LanguageSelector from '../components/LanguageSelector';
 import { loginUser, registerUser } from '../services/api';
+import assetPath from '../utils/assetPath';
 
 export default function LoginPage({ onLogin, onBack, initialMode = 'login' }) {
   const { language, setLanguage, t } = useTranslation();
@@ -101,10 +102,10 @@ export default function LoginPage({ onLogin, onBack, initialMode = 'login' }) {
 
         {/* Floating leaf silhouettes */}
         <div className="login-leaf login-leaf--1" aria-hidden="true">
-          <img src="/images/real-leaf-1.png" alt="" />
+          <img src={assetPath("/images/real-leaf-1.png")} alt="" />
         </div>
         <div className="login-leaf login-leaf--2" aria-hidden="true">
-          <img src="/images/real-leaf-3.png" alt="" />
+          <img src={assetPath("/images/real-leaf-3.png")} alt="" />
         </div>
 
         {/* Content layer */}
@@ -112,7 +113,7 @@ export default function LoginPage({ onLogin, onBack, initialMode = 'login' }) {
           {/* Logo — approx 160px wide, natural aspect ratio */}
           <div className="login-left-logo">
             <img
-              src="/images/agriai-logo-full-transparent.png"
+              src={assetPath("/images/agriai-logo-full-transparent.png")}
               alt="AgriAI"
             />
           </div>
@@ -170,7 +171,7 @@ export default function LoginPage({ onLogin, onBack, initialMode = 'login' }) {
           <div className="login-card-header">
             <div className="login-emblem-box">
               <img
-                src="/images/agriai-emblem-transparent.png"
+                src={assetPath("/images/agriai-emblem-transparent.png")}
                 alt="AgriAI"
               />
             </div>

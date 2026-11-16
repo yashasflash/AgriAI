@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from '../i18n';
 import ScrollReveal from './motion/ScrollReveal';
+import assetPath from '../utils/assetPath';
 
 export default function About() {
   const { t } = useTranslation();
@@ -105,7 +106,7 @@ export default function About() {
                 }}
               >
                 <img
-                  src="/images/login-bg.jpg"
+                  src={assetPath("/images/login-bg.jpg")}
                   alt="Farmer working in agricultural fields"
                   style={{
                     width: '100%',

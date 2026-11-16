@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useScrollProgress } from '../../hooks/useScrollProgress';
+import assetPath from '../../utils/assetPath';
 
 /**
  * CinematicFallingLeaf: A subtle, natural, photorealistic leaf that gently
@@ -116,7 +117,7 @@ export default function CinematicFallingLeaf() {
         }}
       >
         <img
-          src="/images/real-leaf-1.png"
+          src={assetPath("/images/real-leaf-1.png")}
           alt="Natural Agricultural Leaf"
           style={{
             width: '100%',
