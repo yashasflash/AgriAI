@@ -1,10 +1,10 @@
 /**
  * AgriAI — API Service Layer
- * Direct connection to local FastAPI backend (http://127.0.0.1:8000)
- * All authentication, chat sessions, ML inference, and user data stay 100% local.
+ * Supports both local development (http://127.0.0.1:8000)
+ * and production cloud backend via VITE_API_BASE_URL.
  */
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/+$/, "");
 const TOKEN_STORAGE_KEY = "agriai_auth_token";
 const USER_STORAGE_KEY = "agriai_user_info";
 

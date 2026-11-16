@@ -9,11 +9,12 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 import io
+import os
 
 from tensorflow.keras import layers, models
 from tensorflow.keras.applications import MobileNetV2
 
-# Import local SQLite database engine
+# Import database engine (PostgreSQL/Supabase if DATABASE_URL set, else SQLite)
 import db
 
 
@@ -28,59 +29,95 @@ app = FastAPI(
 )
 
 # ------------------------------------------------------------
-# CORS — allow the frontend to call the backend
+# CORS — allow frontend origins (GitHub Pages + localhost)
 # ------------------------------------------------------------
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "*")
+if allowed_origins_env == "*":
+    origins = ["*"]
+else:
+    origins = [o.strip() for o in allowed_origins_env.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Initialize local SQLite database
+# Initialize database tables
 db.init_db()
 
 
 # ============================================================
-# 1. LM STUDIO / PHI-3 CONFIGURATION
+# 1. AI CHATBOT ENGINE (GROQ CLOUD API vs LM STUDIO LOCAL)
 # ============================================================
 
-LM_STUDIO_URL = "http://127.0.0.1:1234/v1/chat/completions"
-MODEL_NAME = "phi-3-mini-4k-instruct"
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq" if GROQ_API_KEY else "lmstudio").lower()
+
+# Groq Cloud Configuration
+GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+
+# LM Studio Local Configuration
+LM_STUDIO_URL = os.getenv("LM_STUDIO_URL", "http://127.0.0.1:1234/v1/chat/completions")
+LM_STUDIO_MODEL = os.getenv("LM_STUDIO_MODEL", "phi-3-mini-4k-instruct")
+
+print(f"AgriAI Chat Engine active provider: {LLM_PROVIDER.upper()}")
 
 
 # ============================================================
 # 2. LOAD CROP RECOMMENDATION MODEL
 # ============================================================
 
-crop_model = joblib.load("crop_recommendation_model.pkl")
-print("Crop recommendation model loaded successfully")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+crop_model_path = os.path.join(BASE_DIR, "crop_recommendation_model.pkl")
+
+try:
+    crop_model = joblib.load(crop_model_path)
+    print("Crop recommendation model loaded successfully")
+except Exception as e:
+    print(f"Warning: Failed to load crop recommendation model: {e}")
+    crop_model = None
 
 
 # ============================================================
 # 3. LOAD LEAF DISEASE MODEL
 # ============================================================
 
-leaf_base_model = MobileNetV2(
-    input_shape=(224, 224, 3),
-    include_top=False,
-    weights="imagenet"
-)
-leaf_base_model.trainable = False
+leaf_weights_path = os.path.join(BASE_DIR, "leaf_disease.weights.h5")
+leaf_model_path = os.path.join(BASE_DIR, "leaf_disease_model.keras")
 
-leaf_model = models.Sequential([
-    layers.Input(shape=(224, 224, 3)),
-    layers.Rescaling(1.0 / 255),
-    leaf_base_model,
-    layers.GlobalAveragePooling2D(),
-    layers.Dropout(0.2),
-    layers.Dense(15, activation="softmax")
-])
+try:
+    leaf_base_model = MobileNetV2(
+        input_shape=(224, 224, 3),
+        include_top=False,
+        weights=None  # Model weights will be populated from trained file
+    )
+    leaf_base_model.trainable = False
 
-# Load trained weights
-leaf_model.load_weights("leaf_disease.weights.h5")
-print("Leaf disease model loaded successfully")
+    leaf_model = models.Sequential([
+        layers.Input(shape=(224, 224, 3)),
+        layers.Rescaling(1.0 / 255),
+        leaf_base_model,
+        layers.GlobalAveragePooling2D(),
+        layers.Dropout(0.2),
+        layers.Dense(15, activation="softmax")
+    ])
+
+    if os.path.exists(leaf_weights_path):
+        leaf_model.load_weights(leaf_weights_path)
+        print("Leaf disease model loaded successfully from leaf_disease.weights.h5")
+    elif os.path.exists(leaf_model_path):
+        leaf_model.load_weights(leaf_model_path)
+        print("Leaf disease model loaded successfully from keras weights")
+    else:
+        print("Warning: Neither leaf_disease.weights.h5 nor leaf_disease_model.keras was found.")
+        leaf_model = None
+except Exception as e:
+    print(f"Warning: Failed to initialize leaf disease model: {e}")
+    leaf_model = None
 
 
 # ============================================================
@@ -171,11 +208,13 @@ def get_current_user_required(authorization: Optional[str] = Header(None)):
 
 @app.get("/")
 def home():
+    db_mode = "Supabase PostgreSQL" if db.is_postgres() else "SQLite Local Storage"
     return {
         "project": "AgriAI",
-        "purpose": "Offline AI Farming Intelligence Platform",
+        "purpose": "AI Farming Intelligence Platform",
         "status": "Backend is running",
-        "database": "SQLite Local Storage"
+        "database": db_mode,
+        "llm_provider": LLM_PROVIDER.upper()
     }
 
 
@@ -183,10 +222,10 @@ def home():
 def health():
     return {
         "status": "healthy",
-        "lm_studio": "running",
-        "crop_model": "loaded",
-        "leaf_model": "loaded",
-        "database": "connected"
+        "llm_provider": LLM_PROVIDER,
+        "crop_model": "loaded" if crop_model is not None else "unavailable",
+        "leaf_model": "loaded" if leaf_model is not None else "unavailable",
+        "database": "postgresql" if db.is_postgres() else "sqlite"
     }
 
 
@@ -333,13 +372,35 @@ def chat(request: ChatRequest, current_user: Optional[dict] = Depends(get_curren
     elif request.language == "hi":
         lang_instruction = "Respond in simple Hindi (हिंदी) or English with Hindi explanations."
 
+    # Configure target inference endpoint & model
+    if LLM_PROVIDER == "groq":
+        if not GROQ_API_KEY:
+            raise HTTPException(
+                status_code=500,
+                detail="Groq Cloud API key is not configured. Please set GROQ_API_KEY in server environment."
+            )
+        target_url = GROQ_URL
+        target_model = GROQ_MODEL
+        headers = {
+            "Authorization": f"Bearer {GROQ_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        provider_name = "Groq Cloud"
+    else:
+        target_url = LM_STUDIO_URL
+        target_model = LM_STUDIO_MODEL
+        headers = {
+            "Content-Type": "application/json"
+        }
+        provider_name = "LM Studio"
+
     payload = {
-        "model": MODEL_NAME,
+        "model": target_model,
         "messages": [
             {
                 "role": "system",
                 "content": (
-                    "You are AgriAI, a helpful offline farming assistant for farmers. "
+                    "You are AgriAI, a helpful farming assistant for farmers. "
                     "Answer the farmer's question directly. "
                     "Give practical, concise, and useful farming advice. "
                     "Use short paragraphs or bullet points. "
@@ -359,14 +420,14 @@ def chat(request: ChatRequest, current_user: Optional[dict] = Depends(get_curren
     }
 
     try:
-        response = requests.post(LM_STUDIO_URL, json=payload, timeout=120)
+        response = requests.post(target_url, json=payload, headers=headers, timeout=60)
         response.raise_for_status()
         result = response.json()
         answer = result["choices"][0]["message"]["content"]
 
         session_id = request.session_id
 
-        # If user is authenticated, automatically persist to SQLite chat history
+        # If user is authenticated, automatically persist to database chat history
         if current_user:
             user_id = current_user["id"]
             if not session_id:
@@ -390,22 +451,28 @@ def chat(request: ChatRequest, current_user: Optional[dict] = Depends(get_curren
     except requests.exceptions.ConnectionError:
         raise HTTPException(
             status_code=503,
-            detail="Cannot connect to LM Studio. Make sure LM Studio Local Server is running at http://127.0.0.1:1234."
+            detail=f"Cannot connect to {provider_name}. If running locally, make sure LM Studio is open at {LM_STUDIO_URL}."
         )
     except requests.exceptions.Timeout:
         raise HTTPException(
             status_code=504,
-            detail="LM Studio response timed out."
+            detail=f"{provider_name} request timed out."
+        )
+    except requests.exceptions.HTTPError as error:
+        status = response.status_code if 'response' in locals() else 500
+        raise HTTPException(
+            status_code=status,
+            detail=f"{provider_name} error: {error}"
         )
     except requests.exceptions.RequestException as error:
         raise HTTPException(
             status_code=500,
-            detail=f"LM Studio request failed: {error}"
+            detail=f"{provider_name} request failed: {error}"
         )
     except (KeyError, IndexError):
         raise HTTPException(
             status_code=500,
-            detail="Unexpected response received from LM Studio."
+            detail=f"Unexpected response structure received from {provider_name}."
         )
 
 
