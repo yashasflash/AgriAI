@@ -1,4 +1,4 @@
-# AgriAI Backend Python Dependencies
+# AgriAI Backend Python Dependencies (Local Development)
 fastapi>=0.110.0
 uvicorn>=0.28.0
 pydantic>=2.6.0
@@ -10,5 +10,4 @@ pillow>=10.2.0
 tensorflow>=2.16.0
 scikit-learn>=1.4.0
 python-multipart>=0.0.9
-psycopg2-binary>=2.9.9
 argon2-cffi>=23.1.0

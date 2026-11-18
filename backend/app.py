@@ -14,22 +14,22 @@ import os
 from tensorflow.keras import layers, models
 from tensorflow.keras.applications import MobileNetV2
 
-# Import database engine (PostgreSQL/Supabase if DATABASE_URL set, else SQLite)
+# Import local SQLite database engine
 import db
 
 
 # ============================================================
-# AgriAI FastAPI Application
+# AgriAI FastAPI Application — Local Architecture
 # ============================================================
 
 app = FastAPI(
     title="AgriAI",
-    description="Offline AI Farming Intelligence Platform",
+    description="Offline AI Farming Intelligence Platform — Local Development",
     version="1.0.0"
 )
 
 # ------------------------------------------------------------
-# CORS — allow frontend origins (GitHub Pages + localhost)
+# CORS — allow local frontend development origins
 # ------------------------------------------------------------
 allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "*")
 if allowed_origins_env == "*":
@@ -45,26 +45,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize database tables
+# Initialize local SQLite database
 db.init_db()
 
 
 # ============================================================
-# 1. AI CHATBOT ENGINE (GROQ CLOUD API vs LM STUDIO LOCAL)
+# 1. LOCAL AI CHATBOT ENGINE (LM STUDIO)
 # ============================================================
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq" if GROQ_API_KEY else "lmstudio").lower()
-
-# Groq Cloud Configuration
-GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
-
-# LM Studio Local Configuration
 LM_STUDIO_URL = os.getenv("LM_STUDIO_URL", "http://127.0.0.1:1234/v1/chat/completions")
 LM_STUDIO_MODEL = os.getenv("LM_STUDIO_MODEL", "phi-3-mini-4k-instruct")
 
-print(f"AgriAI Chat Engine active provider: {LLM_PROVIDER.upper()}")
+print(f"AgriAI Chat Engine: Local LM Studio at {LM_STUDIO_URL} (Model: {LM_STUDIO_MODEL})")
 
 
 # ============================================================
@@ -93,7 +85,7 @@ try:
     leaf_base_model = MobileNetV2(
         input_shape=(224, 224, 3),
         include_top=False,
-        weights=None  # Model weights will be populated from trained file
+        weights=None  # Weights loaded locally from trained weight file
     )
     leaf_base_model.trainable = False
 
@@ -185,7 +177,7 @@ class NewChatRequest(BaseModel):
     title: Optional[str] = "New Farming Chat"
 
 
-# Helper dependency to resolve current user
+# Helper dependencies for authentication
 def get_current_user_optional(authorization: Optional[str] = Header(None)):
     if not authorization:
         return None
@@ -208,13 +200,13 @@ def get_current_user_required(authorization: Optional[str] = Header(None)):
 
 @app.get("/")
 def home():
-    db_mode = "Supabase PostgreSQL" if db.is_postgres() else "SQLite Local Storage"
     return {
         "project": "AgriAI",
-        "purpose": "AI Farming Intelligence Platform",
-        "status": "Backend is running",
-        "database": db_mode,
-        "llm_provider": LLM_PROVIDER.upper()
+        "purpose": "Local AI Farming Intelligence Platform",
+        "status": "Backend is running locally",
+        "database": f"SQLite Local Storage ({db.DB_PATH})",
+        "llm_provider": "LM Studio (http://127.0.0.1:1234)",
+        "llm_model": LM_STUDIO_MODEL
     }
 
 
@@ -222,10 +214,12 @@ def home():
 def health():
     return {
         "status": "healthy",
-        "llm_provider": LLM_PROVIDER,
+        "llm_provider": "lmstudio",
+        "llm_url": LM_STUDIO_URL,
+        "llm_model": LM_STUDIO_MODEL,
         "crop_model": "loaded" if crop_model is not None else "unavailable",
         "leaf_model": "loaded" if leaf_model is not None else "unavailable",
-        "database": "postgresql" if db.is_postgres() else "sqlite"
+        "database": "sqlite"
     }
 
 
@@ -357,7 +351,7 @@ def clear_all_history_endpoint(user: dict = Depends(get_current_user_required)):
 
 
 # ============================================================
-# 9. AI FARMING CHATBOT (WITH PERSISTENT SQLITE LOGGING)
+# 9. AI FARMING CHATBOT (LM STUDIO LOCAL INFERENCE)
 # ============================================================
 
 @app.post("/chat")
@@ -372,30 +366,8 @@ def chat(request: ChatRequest, current_user: Optional[dict] = Depends(get_curren
     elif request.language == "hi":
         lang_instruction = "Respond in simple Hindi (हिंदी) or English with Hindi explanations."
 
-    # Configure target inference endpoint & model
-    if LLM_PROVIDER == "groq":
-        if not GROQ_API_KEY:
-            raise HTTPException(
-                status_code=500,
-                detail="Groq Cloud API key is not configured. Please set GROQ_API_KEY in server environment."
-            )
-        target_url = GROQ_URL
-        target_model = GROQ_MODEL
-        headers = {
-            "Authorization": f"Bearer {GROQ_API_KEY}",
-            "Content-Type": "application/json"
-        }
-        provider_name = "Groq Cloud"
-    else:
-        target_url = LM_STUDIO_URL
-        target_model = LM_STUDIO_MODEL
-        headers = {
-            "Content-Type": "application/json"
-        }
-        provider_name = "LM Studio"
-
     payload = {
-        "model": target_model,
+        "model": LM_STUDIO_MODEL,
         "messages": [
             {
                 "role": "system",
@@ -419,15 +391,19 @@ def chat(request: ChatRequest, current_user: Optional[dict] = Depends(get_curren
         "stream": False
     }
 
+    headers = {
+        "Content-Type": "application/json"
+    }
+
     try:
-        response = requests.post(target_url, json=payload, headers=headers, timeout=60)
+        response = requests.post(LM_STUDIO_URL, json=payload, headers=headers, timeout=60)
         response.raise_for_status()
         result = response.json()
         answer = result["choices"][0]["message"]["content"]
 
         session_id = request.session_id
 
-        # If user is authenticated, automatically persist to database chat history
+        # If user is logged in, automatically save message to local SQLite chat history
         if current_user:
             user_id = current_user["id"]
             if not session_id:
@@ -451,33 +427,33 @@ def chat(request: ChatRequest, current_user: Optional[dict] = Depends(get_curren
     except requests.exceptions.ConnectionError:
         raise HTTPException(
             status_code=503,
-            detail=f"Cannot connect to {provider_name}. If running locally, make sure LM Studio is open at {LM_STUDIO_URL}."
+            detail=f"Cannot connect to LM Studio at {LM_STUDIO_URL}. Please ensure LM Studio is running locally on port 1234 with model '{LM_STUDIO_MODEL}' loaded."
         )
     except requests.exceptions.Timeout:
         raise HTTPException(
             status_code=504,
-            detail=f"{provider_name} request timed out."
+            detail="LM Studio request timed out. Please check model inference load."
         )
     except requests.exceptions.HTTPError as error:
         status = response.status_code if 'response' in locals() else 500
         raise HTTPException(
             status_code=status,
-            detail=f"{provider_name} error: {error}"
+            detail=f"LM Studio error: {error}"
         )
     except requests.exceptions.RequestException as error:
         raise HTTPException(
             status_code=500,
-            detail=f"{provider_name} request failed: {error}"
+            detail=f"LM Studio request failed: {error}"
         )
     except (KeyError, IndexError):
         raise HTTPException(
             status_code=500,
-            detail=f"Unexpected response structure received from {provider_name}."
+            detail="Unexpected response structure received from LM Studio."
         )
 
 
 # ============================================================
-# 10. CROP RECOMMENDATION
+# 10. CROP RECOMMENDATION ML MODEL
 # ============================================================
 
 @app.post("/crop-recommendation")
@@ -509,7 +485,7 @@ def crop_recommendation(request: CropRequest):
 
 
 # ============================================================
-# 11. LEAF DISEASE DETECTION
+# 11. LEAF DISEASE DETECTION MODEL
 # ============================================================
 
 @app.post("/leaf-disease")
@@ -598,65 +574,48 @@ def get_weather(
     lon: float = Query(..., description="Longitude of user's current location")
 ):
     """
-    Fetch real-time weather data for the farmer's coordinates using Open-Meteo
-    and reverse geocode the location to city, region, country.
+    Fetches real-time weather data directly from Open-Meteo for the specified latitude & longitude,
+    and resolves the reverse geocoded city name via BigDataCloud or Open-Meteo geocoding.
     """
     try:
-        # 1. Reverse geocoding (BigDataCloud client-side free API or Nominatim fallback)
-        city = ""
-        region = ""
-        country = ""
-        
+        # Reverse geocode city name
+        city, region, country = None, None, None
         try:
             geo_res = requests.get(
-                f"https://api.bigdatacloud.net/data/reverse-geocode-client?latitude={lat}&longitude={lon}&localityLanguage=en",
-                timeout=4
+                "https://api.bigdatacloud.net/data/reverse-geocode-client",
+                params={"latitude": lat, "longitude": lon, "localityLanguage": "en"},
+                timeout=5
             )
-            if geo_res.ok:
+            if geo_res.status_code == 200:
                 geo_data = geo_res.json()
-                city = geo_data.get("city") or geo_data.get("locality") or geo_data.get("principalSubdivision") or ""
-                region = geo_data.get("principalSubdivision") or geo_data.get("countrySubdivision") or ""
-                country = geo_data.get("countryName") or ""
-        except Exception as geo_err:
-            print(f"Primary reverse geocoding notice: {geo_err}")
-            
-        if not city:
-            try:
-                nom_res = requests.get(
-                    f"https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat={lat}&lon={lon}",
-                    headers={"User-Agent": "AgriAI-Weather/1.0"},
-                    timeout=4
-                )
-                if nom_res.ok:
-                    nom_data = nom_res.json()
-                    addr = nom_data.get("address", {})
-                    city = addr.get("city") or addr.get("town") or addr.get("village") or addr.get("county") or ""
-                    region = addr.get("state") or addr.get("state_district") or ""
-                    country = addr.get("country") or ""
-            except Exception as nom_err:
-                print(f"Fallback reverse geocoding notice: {nom_err}")
+                city = geo_data.get("city") or geo_data.get("locality") or geo_data.get("principalSubdivision")
+                region = geo_data.get("principalSubdivision")
+                country = geo_data.get("countryName")
+        except Exception:
+            pass
 
-        # 2. Fetch real-time weather from Open-Meteo
-        weather_url = (
-            f"https://api.open-meteo.com/v1/forecast?"
-            f"latitude={lat}&longitude={lon}&"
-            f"current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&"
-            f"daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&"
-            f"timezone=auto"
-        )
+        # Fetch Open-Meteo live weather
+        weather_url = "https://api.open-meteo.com/v1/forecast"
+        weather_params = {
+            "latitude": lat,
+            "longitude": lon,
+            "current": "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m",
+            "daily": "temperature_2m_max,temperature_2m_min,precipitation_probability_max",
+            "timezone": "auto",
+            "forecast_days": 1
+        }
         
-        weather_res = requests.get(weather_url, timeout=6)
-        if not weather_res.ok:
-            raise HTTPException(status_code=502, detail="Weather service returned an error.")
-            
-        w_data = weather_res.json()
-        current = w_data.get("current", {})
-        daily = w_data.get("daily", {})
+        res = requests.get(weather_url, params=weather_params, timeout=8)
+        if res.status_code != 200:
+            raise HTTPException(status_code=502, detail="Failed to retrieve weather data from Open-Meteo.")
+
+        data = res.json()
+        current = data.get("current", {})
+        daily = data.get("daily", {})
         
-        wmo_code = int(current.get("weather_code", 0))
+        wmo_code = current.get("weather_code", 0)
         condition_text = wmo_code_to_condition(wmo_code)
         
-        # Max/min daily temperatures
         max_temps = daily.get("temperature_2m_max", [])
         min_temps = daily.get("temperature_2m_min", [])
         rain_probs = daily.get("precipitation_probability_max", [])

@@ -1,4 +1,5 @@
 import os
+import sqlite3
 import hashlib
 import secrets
 import uuid
@@ -9,143 +10,87 @@ from argon2.exceptions import VerifyMismatchError, VerificationError, InvalidHas
 # Argon2id password hasher (RFC 9106 recommended defaults)
 ph = PasswordHasher()
 
-# Database URL detection (Supabase PostgreSQL vs SQLite fallback)
-DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
-
-# Path to local SQLite database fallback
+# Path to local SQLite database
 DB_DIR = os.path.join(os.path.dirname(__file__), "data")
 DB_PATH = os.path.join(DB_DIR, "agriai.db")
 
-def is_postgres():
-    return bool(DATABASE_URL and (DATABASE_URL.startswith("postgres://") or DATABASE_URL.startswith("postgresql://")))
-
 def get_db_connection():
-    if is_postgres():
-        import psycopg2
-        from psycopg2.extras import RealDictCursor
-        # Handle Render/Supabase postgres:// vs postgresql:// compatibility
-        url = DATABASE_URL
-        if url.startswith("postgres://"):
-            url = "postgresql://" + url[len("postgres://"):]
-        conn = psycopg2.connect(url, cursor_factory=RealDictCursor)
-        return conn
-    else:
-        import sqlite3
-        os.makedirs(DB_DIR, exist_ok=True)
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
-        return conn
+    """Connect to local SQLite database with Row factory."""
+    os.makedirs(DB_DIR, exist_ok=True)
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 def _execute_query(cursor, query, params=None):
-    """Translates SQLite '?' parameter placeholders to PostgreSQL '%s' if running Postgres."""
-    if is_postgres():
-        query = query.replace("?", "%s")
+    """Executes a SQLite query with optional parameters."""
     if params is not None:
         cursor.execute(query, params)
     else:
         cursor.execute(query)
 
 def init_db():
+    """Initialize local SQLite tables if they do not exist."""
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    if is_postgres():
-        # PostgreSQL schema
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id SERIAL PRIMARY KEY,
-            name TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL,
-            salt TEXT NOT NULL,
-            created_at TEXT NOT NULL
-        );
-        CREATE TABLE IF NOT EXISTS user_preferences (
-            id SERIAL PRIMARY KEY,
-            user_id INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-            language TEXT DEFAULT 'en',
-            created_at TEXT NOT NULL,
-            updated_at TEXT NOT NULL
-        );
-        CREATE TABLE IF NOT EXISTS auth_tokens (
-            token TEXT PRIMARY KEY,
-            user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-            created_at TEXT NOT NULL
-        );
-        CREATE TABLE IF NOT EXISTS chat_sessions (
-            id TEXT PRIMARY KEY,
-            user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-            title TEXT NOT NULL,
-            created_at TEXT NOT NULL,
-            updated_at TEXT NOT NULL
-        );
-        CREATE TABLE IF NOT EXISTS chat_history (
-            id SERIAL PRIMARY KEY,
-            session_id TEXT NOT NULL REFERENCES chat_sessions(id) ON DELETE CASCADE,
-            user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-            question TEXT NOT NULL,
-            answer TEXT NOT NULL,
-            language TEXT DEFAULT 'en',
-            created_at TEXT NOT NULL
-        );
-        """)
-        conn.commit()
-        conn.close()
-        print("AgriAI PostgreSQL (Supabase) database tables verified/initialized successfully.")
-    else:
-        # SQLite schema
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL,
-            salt TEXT NOT NULL,
-            created_at TEXT NOT NULL
-        );
-        """)
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS user_preferences (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER UNIQUE NOT NULL,
-            language TEXT DEFAULT 'en',
-            created_at TEXT NOT NULL,
-            updated_at TEXT NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-        );
-        """)
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS auth_tokens (
-            token TEXT PRIMARY KEY,
-            user_id INTEGER NOT NULL,
-            created_at TEXT NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-        );
-        """)
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS chat_sessions (
-            id TEXT PRIMARY KEY,
-            user_id INTEGER NOT NULL,
-            title TEXT NOT NULL,
-            created_at TEXT NOT NULL,
-            updated_at TEXT NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-        );
-        """)
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS chat_history (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            session_id TEXT NOT NULL,
-            user_id INTEGER NOT NULL,
-            question TEXT NOT NULL,
-            answer TEXT NOT NULL,
-            language TEXT DEFAULT 'en',
-            created_at TEXT NOT NULL,
-            FOREIGN KEY (session_id) REFERENCES chat_sessions(id) ON DELETE CASCADE,
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-        );
-        """)
-        conn.commit()
-        conn.close()
-        print(f"AgriAI SQLite database initialized at {DB_PATH}")
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        salt TEXT NOT NULL,
+        created_at TEXT NOT NULL
+    );
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS user_preferences (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER UNIQUE NOT NULL,
+        language TEXT DEFAULT 'en',
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS auth_tokens (
+        token TEXT PRIMARY KEY,
+        user_id INTEGER NOT NULL,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS chat_sessions (
+        id TEXT PRIMARY KEY,
+        user_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS chat_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id TEXT NOT NULL,
+        user_id INTEGER NOT NULL,
+        question TEXT NOT NULL,
+        answer TEXT NOT NULL,
+        language TEXT DEFAULT 'en',
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (session_id) REFERENCES chat_sessions(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    """)
+
+    conn.commit()
+    conn.close()
+    print(f"AgriAI local SQLite database initialized at {DB_PATH}")
 
 def hash_password(password: str):
     """Generates an industry-standard Argon2id hash for the given password."""
@@ -164,7 +109,6 @@ def verify_and_check_upgrade(password: str, salt: str, stored_hash: str):
     if stored_hash.startswith("$argon2"):
         try:
             ph.verify(stored_hash, password)
-            # Check if parameters need upgrading
             if ph.check_needs_rehash(stored_hash):
                 return True, ph.hash(password)
             return True, None
@@ -200,20 +144,12 @@ def register_user(name: str, password: str, language: str = "en"):
         pwd_hash, salt = hash_password(password)
         now = datetime.utcnow().isoformat()
 
-        if is_postgres():
-            _execute_query(
-                cursor,
-                "INSERT INTO users (name, password_hash, salt, created_at) VALUES (?, ?, ?, ?) RETURNING id",
-                (name, pwd_hash, salt, now)
-            )
-            user_id = cursor.fetchone()["id"]
-        else:
-            _execute_query(
-                cursor,
-                "INSERT INTO users (name, password_hash, salt, created_at) VALUES (?, ?, ?, ?)",
-                (name, pwd_hash, salt, now)
-            )
-            user_id = cursor.lastrowid
+        _execute_query(
+            cursor,
+            "INSERT INTO users (name, password_hash, salt, created_at) VALUES (?, ?, ?, ?)",
+            (name, pwd_hash, salt, now)
+        )
+        user_id = cursor.lastrowid
 
         _execute_query(
             cursor,
@@ -258,6 +194,7 @@ def login_user(name: str, password: str):
         # Automatic seamless migration: upgrade legacy hash to Argon2id in DB
         if upgraded_hash:
             _execute_query(cursor, "UPDATE users SET password_hash = ?, salt = ? WHERE id = ?", (upgraded_hash, "argon2id", user_id))
+
         _execute_query(cursor, "SELECT language FROM user_preferences WHERE user_id = ?", (user_id,))
         pref = cursor.fetchone()
         language = pref["language"] if pref else "en"
@@ -329,18 +266,11 @@ def update_user_profile(user_id: int, name: str = None, language: str = None, ne
             _execute_query(cursor, "UPDATE users SET password_hash = ?, salt = ? WHERE id = ?", (new_hash, new_salt, user_id))
 
         if language:
-            if is_postgres():
-                _execute_query(cursor, """
-                    INSERT INTO user_preferences (user_id, language, created_at, updated_at) 
-                    VALUES (?, ?, ?, ?)
-                    ON CONFLICT(user_id) DO UPDATE SET language = EXCLUDED.language, updated_at = EXCLUDED.updated_at
-                """, (user_id, language, now, now))
-            else:
-                _execute_query(cursor, """
-                    INSERT INTO user_preferences (user_id, language, created_at, updated_at) 
-                    VALUES (?, ?, ?, ?)
-                    ON CONFLICT(user_id) DO UPDATE SET language = excluded.language, updated_at = excluded.updated_at
-                """, (user_id, language, now, now))
+            _execute_query(cursor, """
+                INSERT INTO user_preferences (user_id, language, created_at, updated_at) 
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT(user_id) DO UPDATE SET language = excluded.language, updated_at = excluded.updated_at
+            """, (user_id, language, now, now))
 
         conn.commit()
 
@@ -461,18 +391,11 @@ def save_chat_message(user_id: int, session_id: str, question: str, answer: str,
         else:
             _execute_query(cursor, "UPDATE chat_sessions SET updated_at = ? WHERE id = ?", (now, session_id))
 
-        if is_postgres():
-            _execute_query(cursor, """
-                INSERT INTO chat_history (session_id, user_id, question, answer, language, created_at)
-                VALUES (?, ?, ?, ?, ?, ?) RETURNING id
-            """, (session_id, user_id, question, answer, language or "en", now))
-            msg_id = cursor.fetchone()["id"]
-        else:
-            _execute_query(cursor, """
-                INSERT INTO chat_history (session_id, user_id, question, answer, language, created_at)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (session_id, user_id, question, answer, language or "en", now))
-            msg_id = cursor.lastrowid
+        _execute_query(cursor, """
+            INSERT INTO chat_history (session_id, user_id, question, answer, language, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (session_id, user_id, question, answer, language or "en", now))
+        msg_id = cursor.lastrowid
 
         conn.commit()
         return {
