@@ -1,6 +1,5 @@
-
 # ============================================================
-# AgriAI — Start Script
+# AgriAI - Start Script
 # ============================================================
 # Starts both the FastAPI backend and the frontend server.
 #
@@ -16,7 +15,7 @@
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Green
-Write-Host "  AgriAI — Starting Application" -ForegroundColor Green
+Write-Host "  AgriAI - Starting Application" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
 
@@ -53,12 +52,12 @@ $frontendJob = Start-Process -FilePath "npm.cmd" `
     -NoNewWindow
 
 Write-Host "  Frontend PID: $($frontendJob.Id)" -ForegroundColor DarkGray
-Write-Host "  Frontend URL: http://localhost:3000" -ForegroundColor DarkGray
+Write-Host "  Frontend URL: http://localhost:5173" -ForegroundColor DarkGray
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Green
 Write-Host "  AgriAI is ready!" -ForegroundColor Green
 Write-Host "" -ForegroundColor Green
-Write-Host "  Frontend:  http://localhost:3000" -ForegroundColor Yellow
+Write-Host "  Frontend:  http://localhost:5173" -ForegroundColor Yellow
 Write-Host "  Backend:   http://127.0.0.1:8000" -ForegroundColor Yellow
 Write-Host "  LM Studio: http://127.0.0.1:1234" -ForegroundColor Yellow
 Write-Host "========================================" -ForegroundColor Green

@@ -58,23 +58,35 @@ export default function LoginPage({ onLogin, onBack, initialMode = 'login' }) {
     } catch (err) {
       console.warn('Auth error:', err);
       const rawMsg = err.message || '';
+      const status = err.status;
+      const isNetwork =
+        err.isNetworkError ||
+        rawMsg.toLowerCase().includes('failed to fetch') ||
+        rawMsg.toLowerCase().includes('network') ||
+        rawMsg.toLowerCase().includes('refused') ||
+        rawMsg.toLowerCase().includes('unavailable');
+
       if (
+        status === 401 ||
+        (!isRegister && (rawMsg.toLowerCase().includes('incorrect') || rawMsg.toLowerCase().includes('password')))
+      ) {
+        setErrorMsg(t.auth?.errorInvalidCreds || 'Name or password is incorrect.');
+      } else if (
+        status === 400 ||
         rawMsg.toLowerCase().includes('already exists') ||
         rawMsg.toLowerCase().includes('duplicate') ||
         rawMsg.toLowerCase().includes('unique')
       ) {
         setErrorMsg(t.auth?.errorExists || 'An account with this name already exists.');
-      } else if (
-        rawMsg.toLowerCase().includes('failed to fetch') ||
-        rawMsg.toLowerCase().includes('network') ||
-        rawMsg.toLowerCase().includes('unavailable')
-      ) {
-        setErrorMsg(t.auth?.errorUnavailable || 'AgriAI is temporarily unavailable. Please try again.');
+      } else if (isNetwork) {
+        setErrorMsg('AgriAI backend is not reachable. Please ensure the backend service is running.');
       } else {
         setErrorMsg(
-          isRegister
+          err.detail ||
+          rawMsg ||
+          (isRegister
             ? (t.auth?.errorExists || 'Registration failed. Please try another name.')
-            : (t.auth?.errorInvalidCreds || 'Name or password is incorrect.')
+            : (t.auth?.errorInvalidCreds || 'Name or password is incorrect.'))
         );
       }
     } finally {

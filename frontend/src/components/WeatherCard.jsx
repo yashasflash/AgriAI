@@ -640,7 +640,7 @@ export default function WeatherCard({ onApplyWeather }) {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 90px), 1fr))',
                 gap: '0.45rem',
                 paddingTop: '0.75rem',
                 borderTop: '1px solid rgba(15, 56, 30, 0.08)'

@@ -395,6 +395,361 @@ export async function getWeatherData(lat, lon) {
   }
 }
 
+/**
+ * 16. Smart Agricultural Market Intelligence (Live Mandi Prices)
+ * Endpoints:
+ * - GET /mandi/prices
+ * - GET /mandi/filters
+ * - GET /mandi/summary
+ * - POST /mandi/sync
+ */
+
+export async function getMandiPrices({
+  search = "",
+  state = "",
+  district = "",
+  market = "",
+  commodity = "",
+  sort = "date_desc",
+  page = 1,
+  limit = 20,
+} = {}) {
+  try {
+    const params = new URLSearchParams();
+    if (search) params.append("search", search);
+    if (state) params.append("state", state);
+    if (district) params.append("district", district);
+    if (market) params.append("market", market);
+    if (commodity) params.append("commodity", commodity);
+    if (sort) params.append("sort", sort);
+    if (page) params.append("page", page);
+    if (limit) params.append("limit", limit);
+
+    const queryString = params.toString() ? `?${params.toString()}` : "";
+    const res = await fetch(`${API_BASE_URL}/mandi/prices${queryString}`, {
+      headers: getAuthHeaders(false),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new ApiError(data?.detail || "Failed to fetch mandi market prices", res.status, data?.detail);
+    }
+    return data;
+  } catch (err) {
+    console.error("Mandi prices API error:", err);
+    if (err instanceof ApiError) throw err;
+    throw new ApiError(err.message || "Network error fetching mandi prices", 0, err.message);
+  }
+}
+
+export async function getMandiFilters(state = "") {
+  try {
+    const url = state
+      ? `${API_BASE_URL}/mandi/filters?state=${encodeURIComponent(state)}`
+      : `${API_BASE_URL}/mandi/filters`;
+    const res = await fetch(url, { headers: getAuthHeaders(false) });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new ApiError(data?.detail || "Failed to fetch mandi filter options", res.status, data?.detail);
+    }
+    return data?.filters || { states: [], districts: [], markets: [], commodities: [] };
+  } catch (err) {
+    console.error("Mandi filters API error:", err);
+    if (err instanceof ApiError) throw err;
+    throw new ApiError(err.message || "Network error fetching mandi filters", 0, err.message);
+  }
+}
+
+export async function getMandiSummary() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/mandi/summary`, { headers: getAuthHeaders(false) });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new ApiError(data?.detail || "Failed to fetch mandi market summary", res.status, data?.detail);
+    }
+    return data?.summary || null;
+  } catch (err) {
+    console.error("Mandi summary API error:", err);
+    if (err instanceof ApiError) throw err;
+    throw new ApiError(err.message || "Network error fetching mandi summary", 0, err.message);
+  }
+}
+
+export async function syncMandiData(apiKey = null) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/mandi/sync`, {
+      method: "POST",
+      headers: getAuthHeaders(true),
+      body: JSON.stringify({ api_key: apiKey || null }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new ApiError(data?.detail || "Failed to synchronize mandi data", res.status, data?.detail);
+    }
+    return data?.sync || data;
+  } catch (err) {
+    console.error("Mandi sync API error:", err);
+    if (err instanceof ApiError) throw err;
+    throw new ApiError(err.message || "Network error syncing mandi data", 0, err.message);
+  }
+}
+
+/**
+ * 17. Market Price Comparison (Cross-Mandi Arbitrage & Spread Analysis)
+ * Endpoint: GET /mandi/compare?commodity=...&state=...&unit=...
+ */
+export async function getMandiComparison({ commodity, state = "", unit = "", variety = "" }) {
+  try {
+    const params = new URLSearchParams();
+    if (commodity) params.append("commodity", commodity);
+    if (state && state.toLowerCase() !== "all") params.append("state", state);
+    if (unit && unit.toLowerCase() !== "all") params.append("unit", unit);
+    if (variety && variety.toLowerCase() !== "all") params.append("variety", variety);
+
+    const queryString = params.toString() ? `?${params.toString()}` : "";
+    const res = await fetch(`${API_BASE_URL}/mandi/compare${queryString}`, {
+      headers: getAuthHeaders(false),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new ApiError(data?.detail || "Failed to fetch market price comparison", res.status, data?.detail);
+    }
+    return data?.comparison || null;
+  } catch (err) {
+    console.error("Mandi comparison API error:", err);
+    if (err instanceof ApiError) throw err;
+    throw new ApiError(err.message || "Network error fetching market price comparison", 0, err.message);
+  }
+}
+
+/**
+ * 18. Best Market Suggestion MVP
+ * Endpoint: GET /mandi/best-market?commodity=...&state=...&unit=...&variety=...
+ */
+export async function getBestMarketSuggestion({ commodity, state = "", unit = "", variety = "" }) {
+  try {
+    const params = new URLSearchParams();
+    if (commodity) params.append("commodity", commodity);
+    if (state && state.toLowerCase() !== "all") params.append("state", state);
+    if (unit && unit.toLowerCase() !== "all") params.append("unit", unit);
+    if (variety && variety.toLowerCase() !== "all") params.append("variety", variety);
+
+    const queryString = params.toString() ? `?${params.toString()}` : "";
+    const res = await fetch(`${API_BASE_URL}/mandi/best-market${queryString}`, {
+      headers: getAuthHeaders(false),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new ApiError(data?.detail || "Failed to fetch best market suggestion", res.status, data?.detail);
+    }
+    return data?.recommendation || null;
+  } catch (err) {
+    console.error("Best market suggestion API error:", err);
+    if (err instanceof ApiError) throw err;
+    throw new ApiError(err.message || "Network error fetching best market suggestion", 0, err.message);
+  }
+}
+
+/**
+ * 19. Basic Selling Advice MVP
+ * Endpoint: GET /mandi/selling-advice?commodity=...&state=...&market=...&variety=...&unit=...
+ */
+export async function getBasicSellingAdvice({ commodity, state = "", market = "", variety = "", unit = "" }) {
+  try {
+    const params = new URLSearchParams();
+    if (commodity) params.append("commodity", commodity);
+    if (state && state.toLowerCase() !== "all") params.append("state", state);
+    if (market && market.toLowerCase() !== "all") params.append("market", market);
+    if (variety && variety.toLowerCase() !== "all") params.append("variety", variety);
+    if (unit && unit.toLowerCase() !== "all") params.append("unit", unit);
+
+    const queryString = params.toString() ? `?${params.toString()}` : "";
+    const res = await fetch(`${API_BASE_URL}/mandi/selling-advice${queryString}`, {
+      headers: getAuthHeaders(false),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new ApiError(data?.detail || "Failed to fetch basic selling advice", res.status, data?.detail);
+    }
+    return data?.advice || null;
+  } catch (err) {
+    console.error("Selling advice API error:", err);
+    if (err instanceof ApiError) throw err;
+    throw new ApiError(err.message || "Network error fetching basic selling advice", 0, err.message);
+  }
+}
+
+/**
+ * 20. Statistical Mandi Price Trend Series (Feature 5 - Stage 6A/6B)
+ * Endpoint: GET /mandi/trends/series?commodity=...&market=...&variety=...&state=...&unit=...&observations=...
+ */
+export async function getMandiTrendsSeries({
+  commodity,
+  market,
+  variety = "",
+  state = "",
+  unit = "",
+  observations = 30
+}) {
+  try {
+    const params = new URLSearchParams();
+    if (commodity) params.append("commodity", commodity);
+    if (market) params.append("market", market);
+    if (variety && variety.toLowerCase() !== "all") params.append("variety", variety);
+    if (state && state.toLowerCase() !== "all") params.append("state", state);
+    if (unit && unit.toLowerCase() !== "all") params.append("unit", unit);
+    if (observations) params.append("observations", String(observations));
+
+    const queryString = params.toString() ? `?${params.toString()}` : "";
+    const res = await fetch(`${API_BASE_URL}/mandi/trends/series${queryString}`, {
+      headers: getAuthHeaders(false),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new ApiError(data?.detail || "Failed to fetch mandi price trend series", res.status, data?.detail);
+    }
+    return data || null;
+  } catch (err) {
+    console.error("Mandi trends series API error:", err);
+    if (err instanceof ApiError) throw err;
+    throw new ApiError(err.message || "Network error fetching mandi price trend series", 0, err.message);
+  }
+}
+
+/**
+ * 21. Multi-Market Mandi Trends Summary (Feature 5 - Stage 6A/6B)
+ * Endpoint: GET /mandi/trends/summary?commodity=...&state=...
+ */
+export async function getMandiTrendsSummary({ commodity, state = "" }) {
+  try {
+    const params = new URLSearchParams();
+    if (commodity) params.append("commodity", commodity);
+    if (state && state.toLowerCase() !== "all") params.append("state", state);
+
+    const queryString = params.toString() ? `?${params.toString()}` : "";
+    const res = await fetch(`${API_BASE_URL}/mandi/trends/summary${queryString}`, {
+      headers: getAuthHeaders(false),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new ApiError(data?.detail || "Failed to fetch mandi trends summary", res.status, data?.detail);
+    }
+    return data || null;
+  } catch (err) {
+    console.error("Mandi trends summary API error:", err);
+    if (err instanceof ApiError) throw err;
+    throw new ApiError(err.message || "Network error fetching mandi trends summary", 0, err.message);
+  }
+}
+
+/**
+ * 22. Historical Collection Status (Feature 5 - Stage 5/6)
+ * Endpoint: GET /mandi/history/status
+ */
+export async function getMandiHistoryStatus() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/mandi/history/status`, {
+      headers: getAuthHeaders(false),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new ApiError(data?.detail || "Failed to fetch mandi history status", res.status, data?.detail);
+    }
+    return data?.history_status || null;
+  } catch (err) {
+    console.error("Mandi history status API error:", err);
+    if (err instanceof ApiError) throw err;
+    throw new ApiError(err.message || "Network error fetching mandi history status", 0, err.message);
+  }
+}
+
+/**
+ * 23. Mandi Forecast Readiness Assessment (Stage 7B)
+ * Endpoint: GET /mandi/forecast/readiness
+ */
+export async function getMandiForecastReadiness() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/mandi/forecast/readiness`, {
+      headers: getAuthHeaders(false),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new ApiError(data?.detail || "Failed to fetch mandi forecast readiness", res.status, data?.detail);
+    }
+    return data?.forecast_readiness || data || null;
+  } catch (err) {
+    console.error("Mandi forecast readiness API error:", err);
+    if (err instanceof ApiError) throw err;
+    throw new ApiError(err.message || "Network error fetching mandi forecast readiness", 0, err.message);
+  }
+}
+
+/**
+ * 24. Mandi Forecast Series & Readiness Tier (Stage 7B)
+ * Endpoint: GET /mandi/forecast/series?commodity=...&market=...
+ */
+export async function getMandiForecastSeries({ commodity, market, state = "", variety = "", unit = "" }) {
+  try {
+    const params = new URLSearchParams();
+    if (commodity) params.append("commodity", commodity);
+    if (market) params.append("market", market);
+    if (state && state.toLowerCase() !== "all") params.append("state", state);
+    if (variety && variety.toLowerCase() !== "all") params.append("variety", variety);
+    if (unit && unit.toLowerCase() !== "all") params.append("unit", unit);
+
+    const queryString = params.toString() ? `?${params.toString()}` : "";
+    const res = await fetch(`${API_BASE_URL}/mandi/forecast/series${queryString}`, {
+      headers: getAuthHeaders(false),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new ApiError(data?.detail || "Failed to fetch mandi forecast series", res.status, data?.detail);
+    }
+    return data || null;
+  } catch (err) {
+    console.error("Mandi forecast series API error:", err);
+    if (err instanceof ApiError) throw err;
+    throw new ApiError(err.message || "Network error fetching mandi forecast series", 0, err.message);
+  }
+}
+
+/**
+ * 25. Mandi Forecast Naive Baseline Benchmark (Stage 7B)
+ * Endpoint: GET /mandi/forecast/baseline?commodity=...&market=...
+ */
+export async function getMandiForecastBaseline({ commodity, market, state = "", variety = "", unit = "" }) {
+  try {
+    const params = new URLSearchParams();
+    if (commodity) params.append("commodity", commodity);
+    if (market) params.append("market", market);
+    if (state && state.toLowerCase() !== "all") params.append("state", state);
+    if (variety && variety.toLowerCase() !== "all") params.append("variety", variety);
+    if (unit && unit.toLowerCase() !== "all") params.append("unit", unit);
+
+    const queryString = params.toString() ? `?${params.toString()}` : "";
+    const res = await fetch(`${API_BASE_URL}/mandi/forecast/baseline${queryString}`, {
+      headers: getAuthHeaders(false),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new ApiError(data?.detail || "Failed to fetch mandi forecast baseline", res.status, data?.detail);
+    }
+    return data || null;
+  } catch (err) {
+    console.error("Mandi forecast baseline API error:", err);
+    if (err instanceof ApiError) throw err;
+    throw new ApiError(err.message || "Network error fetching mandi forecast baseline", 0, err.message);
+  }
+}
 
 
 

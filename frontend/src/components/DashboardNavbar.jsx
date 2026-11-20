@@ -19,7 +19,8 @@ export default function DashboardNavbar({
   const tabs = [
     { id: 'chat', label: t.dashboard?.tabChat || 'AI Assistant', icon: '💬' },
     { id: 'crop', label: t.dashboard?.tabCrop || 'Crop Advisory', icon: '🌱' },
-    { id: 'leaf', label: t.dashboard?.tabLeaf || 'Leaf Health', icon: '🍃' }
+    { id: 'leaf', label: t.dashboard?.tabLeaf || 'Leaf Health', icon: '🍃' },
+    { id: 'mandi', label: t.dashboard?.tabMandi || 'Market Intelligence', icon: '📊' }
   ];
 
   return (
@@ -32,45 +33,222 @@ export default function DashboardNavbar({
         width: '100%',
         display: 'flex',
         justifyContent: 'center',
-        padding: '0.65rem 1.25rem',
-        pointerEvents: 'none'
+        padding: '0.65rem 1rem',
+        pointerEvents: 'none',
+        boxSizing: 'border-box'
       }}
     >
+      <style>{`
+        .dashboard-nav-container {
+          box-sizing: border-box !important;
+          width: 100% !important;
+          max-width: 1380px !important;
+          background: rgba(255, 255, 255, 0.95) !important;
+          backdrop-filter: blur(20px) !important;
+          -webkit-backdrop-filter: blur(20px) !important;
+          border: 1px solid rgba(22, 101, 52, 0.14) !important;
+          border-radius: 26px !important;
+          padding: 0.45rem 0.85rem !important;
+          box-shadow: 0 10px 30px -4px rgba(15, 56, 30, 0.08), 0 2px 8px -2px rgba(15, 56, 30, 0.04) !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          gap: 0.65rem !important;
+          transition: all 0.25s ease !important;
+        }
+
+        .dashboard-brand-left {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          flex-shrink: 0;
+          min-width: 0;
+          user-select: none;
+        }
+
+        .desktop-dashboard-tabs {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(241, 245, 249, 0.85);
+          padding: 3px;
+          border-radius: 9999px;
+          border: 1px solid #e2e8f0;
+          gap: 2px;
+          flex: 0 1 auto;
+          min-width: 0;
+        }
+
+        .dashboard-tab-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          padding: 0.36rem 0.78rem;
+          border-radius: 9999px;
+          font-size: 0.83rem;
+          white-space: nowrap;
+          cursor: pointer;
+          transition: all 0.18s ease;
+          flex-shrink: 0;
+        }
+
+        .dashboard-actions-right {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          flex-shrink: 0;
+          min-width: 0;
+          justify-content: flex-end;
+        }
+
+        .dashboard-user-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          padding: 0.36rem 0.75rem;
+          border-radius: 9999px;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          color: #1e293b;
+          font-size: 0.82rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.18s ease;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+          flex-shrink: 0;
+          white-space: nowrap;
+        }
+
+        .dashboard-settings-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          padding: 0.36rem 0.72rem;
+          border-radius: 9999px;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          color: #334155;
+          font-size: 0.82rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.18s ease;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+          flex-shrink: 0;
+          white-space: nowrap;
+        }
+
+        .dashboard-logout-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          padding: 0.36rem 0.8rem;
+          border-radius: 9999px;
+          background: #fef2f2;
+          border: 1px solid #fecaca;
+          color: #dc2626;
+          font-size: 0.82rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.18s ease;
+          box-shadow: 0 1px 3px rgba(220, 38, 38, 0.05);
+          flex-shrink: 0;
+          white-space: nowrap;
+          margin-right: 0 !important;
+        }
+
+        .mobile-hamburger-btn {
+          display: none;
+          width: 36px;
+          height: 36px;
+          border-radius: 10px;
+          background: rgba(15, 56, 30, 0.06);
+          border: 1px solid rgba(15, 56, 30, 0.1);
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          padding: 7px;
+          flex-shrink: 0;
+        }
+
+        /* Large desktop view (1200px+) */
+        @media (min-width: 1200px) {
+          .dashboard-nav-container {
+            padding: 0.45rem 1.15rem !important;
+            gap: 1rem !important;
+          }
+          .dashboard-tab-btn {
+            padding: 0.38rem 0.95rem !important;
+            font-size: 0.85rem !important;
+          }
+        }
+
+        /* Medium desktop / laptop (1025px - 1199px) */
+        @media (max-width: 1199px) and (min-width: 1025px) {
+          .dashboard-nav-container {
+            padding: 0.4rem 0.75rem !important;
+            gap: 0.45rem !important;
+          }
+          .dashboard-tab-btn {
+            padding: 0.32rem 0.65rem !important;
+            font-size: 0.8rem !important;
+            gap: 0.25rem !important;
+          }
+          .dashboard-actions-right {
+            gap: 0.25rem !important;
+          }
+          .dashboard-user-btn,
+          .dashboard-settings-btn,
+          .dashboard-logout-btn {
+            padding: 0.32rem 0.65rem !important;
+            font-size: 0.8rem !important;
+          }
+        }
+
+        /* Tablet / Compact Desktop (<= 1024px) */
+        @media (max-width: 1024px) {
+          .desktop-dashboard-tabs {
+            display: none !important;
+          }
+          .mobile-hamburger-btn {
+            display: flex !important;
+          }
+          .dashboard-nav-container {
+            padding: 0.45rem 0.85rem !important;
+          }
+        }
+
+        /* Mobile / Compact (< 640px) */
+        @media (max-width: 640px) {
+          .brand-subtitle {
+            display: none !important;
+          }
+          .desktop-settings-text {
+            display: none !important;
+          }
+          .user-name-display {
+            display: none !important;
+          }
+          .dashboard-logout-btn span:last-child {
+            display: none !important;
+          }
+          .dashboard-logout-btn {
+            padding: 0.36rem 0.6rem !important;
+          }
+          .dashboard-actions-right {
+            gap: 0.25rem !important;
+          }
+        }
+      `}</style>
+
       {/* Floating Pill Glass Navbar for Dashboard */}
-      <div
-        className="floating-navbar-pill dashboard-nav-container"
-        style={{
-          pointerEvents: 'auto',
-          width: '100%',
-          maxWidth: '1280px',
-          background: 'rgba(255, 255, 255, 0.92)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(22, 101, 52, 0.14)',
-          borderRadius: '24px',
-          padding: '0.5rem 1.25rem',
-          boxShadow: '0 10px 30px -4px rgba(15, 56, 30, 0.08), 0 2px 8px -2px rgba(15, 56, 30, 0.04)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '1rem',
-          transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-        }}
-      >
+      <div className="floating-navbar-pill dashboard-nav-container" style={{ pointerEvents: 'auto' }}>
         {/* Left: Brand Identity */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.7rem',
-            userSelect: 'none'
-          }}
-        >
+        <div className="dashboard-brand-left">
           <div
             className="brand-icon-box"
             style={{
-              width: '38px',
-              height: '38px',
+              width: '36px',
+              height: '36px',
               borderRadius: '50%',
               background: '#ffffff',
               border: '1px solid rgba(22, 101, 52, 0.16)',
@@ -84,7 +262,7 @@ export default function DashboardNavbar({
             }}
           >
             <img
-              src={assetPath("/images/agriai-emblem-transparent.png")}
+              src={assetPath('/images/agriai-emblem-transparent.png')}
               alt="AgriAI Emblem"
               style={{
                 width: '100%',
@@ -97,7 +275,7 @@ export default function DashboardNavbar({
             <div
               style={{
                 fontWeight: 900,
-                fontSize: '1.2rem',
+                fontSize: '1.15rem',
                 color: 'var(--color-green-dark)',
                 letterSpacing: '-0.025em',
                 lineHeight: 1.1
@@ -106,8 +284,9 @@ export default function DashboardNavbar({
               AgriAI
             </div>
             <div
+              className="brand-subtitle"
               style={{
-                fontSize: '0.7rem',
+                fontSize: '0.68rem',
                 color: '#64748b',
                 fontWeight: 600,
                 letterSpacing: '0.01em'
@@ -119,18 +298,7 @@ export default function DashboardNavbar({
         </div>
 
         {/* Center: Dashboard Application Tabs */}
-        <nav
-          className="desktop-dashboard-tabs"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            background: 'rgba(241, 245, 249, 0.75)',
-            padding: '4px',
-            borderRadius: 'var(--radius-full)',
-            border: '1px solid #e2e8f0',
-            gap: '3px'
-          }}
-        >
+        <nav className="desktop-dashboard-tabs">
           {tabs.map((tab) => {
             const isCurrent = activeTab === tab.id;
             return (
@@ -138,21 +306,13 @@ export default function DashboardNavbar({
                 key={tab.id}
                 type="button"
                 onClick={() => onTabChange(tab.id)}
+                className="dashboard-tab-btn"
                 style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.45rem',
-                  padding: '0.38rem 1.05rem',
-                  borderRadius: 'var(--radius-full)',
-                  fontSize: '0.85rem',
                   fontWeight: isCurrent ? 800 : 600,
                   color: isCurrent ? '#166534' : '#475569',
                   background: isCurrent ? '#eaf3e6' : 'transparent',
                   boxShadow: isCurrent ? '0 2px 6px rgba(22, 101, 52, 0.12)' : 'none',
-                  border: isCurrent ? '1px solid #c7e1be' : '1px solid transparent',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  whiteSpace: 'nowrap'
+                  border: isCurrent ? '1px solid #c7e1be' : '1px solid transparent'
                 }}
                 onMouseEnter={(e) => {
                   if (!isCurrent) {
@@ -167,36 +327,21 @@ export default function DashboardNavbar({
                   }
                 }}
               >
-                <span style={{ fontSize: '0.95rem' }}>{tab.icon}</span>
+                <span style={{ fontSize: '0.92rem' }}>{tab.icon}</span>
                 <span>{tab.label}</span>
               </button>
             );
           })}
         </nav>
 
-        {/* Right: User Profile + Settings + Logout (Language is exclusively inside Settings) */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+        {/* Right: User Profile + Settings + Logout */}
+        <div className="dashboard-actions-right">
           {/* 👤 My Profile Button */}
           <button
             type="button"
             onClick={onOpenProfile}
             title={t.myProfile?.modalTitle || 'My Profile'}
             className="dashboard-user-btn"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              padding: '0.38rem 0.9rem',
-              borderRadius: 'var(--radius-full)',
-              background: '#ffffff',
-              border: '1px solid #e2e8f0',
-              color: '#1e293b',
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
-            }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-1px)';
               e.currentTarget.style.borderColor = '#86efac';
@@ -208,11 +353,20 @@ export default function DashboardNavbar({
               e.currentTarget.style.background = '#ffffff';
             }}
           >
-            <span style={{ fontSize: '1.05rem' }}>{avatar.emoji || '👤'}</span>
-            <span className="user-name-display" style={{ textTransform: 'capitalize' }}>
+            <span style={{ fontSize: '1rem' }}>{avatar.emoji || '👤'}</span>
+            <span
+              className="user-name-display"
+              style={{
+                textTransform: 'capitalize',
+                maxWidth: '90px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
+            >
               {user?.name || 'Ramesh'}
             </span>
-            <span style={{ fontSize: '0.72rem', color: '#64748b', marginLeft: '1px' }}>⌵</span>
+            <span style={{ fontSize: '0.68rem', color: '#64748b', marginLeft: '1px' }}>⌵</span>
           </button>
 
           {/* ⚙️ Settings Button */}
@@ -221,21 +375,6 @@ export default function DashboardNavbar({
             onClick={onOpenSettings}
             title={t.settings?.modalTitle || 'Settings'}
             className="dashboard-settings-btn"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              padding: '0.38rem 0.85rem',
-              borderRadius: 'var(--radius-full)',
-              background: '#ffffff',
-              border: '1px solid #e2e8f0',
-              color: '#334155',
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
-            }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = '#f8fafc';
               e.currentTarget.style.transform = 'translateY(-1px)';
@@ -255,21 +394,6 @@ export default function DashboardNavbar({
             onClick={onLogout}
             title={t.nav?.logout || 'Logout'}
             className="dashboard-logout-btn"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              padding: '0.38rem 0.85rem',
-              borderRadius: 'var(--radius-full)',
-              background: '#fef2f2',
-              border: '1px solid #fecaca',
-              color: '#dc2626',
-              fontSize: '0.84rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              boxShadow: '0 1px 3px rgba(220, 38, 38, 0.05)'
-            }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = '#fee2e2';
               e.currentTarget.style.transform = 'translateY(-1px)';
@@ -290,19 +414,6 @@ export default function DashboardNavbar({
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle Dashboard Menu"
             aria-expanded={mobileMenuOpen}
-            style={{
-              display: 'none',
-              width: '38px',
-              height: '38px',
-              borderRadius: '10px',
-              background: 'rgba(15, 56, 30, 0.06)',
-              border: '1px solid rgba(15, 56, 30, 0.1)',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              position: 'relative',
-              padding: '8px'
-            }}
           >
             <div
               style={{
@@ -406,7 +517,16 @@ export default function DashboardNavbar({
             })}
           </div>
 
-          <div style={{ marginTop: '0.5rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(15, 56, 30, 0.08)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div
+            style={{
+              marginTop: '0.5rem',
+              paddingTop: '0.75rem',
+              borderTop: '1px solid rgba(15, 56, 30, 0.08)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.5rem'
+            }}
+          >
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <button
                 type="button"
@@ -483,4 +603,3 @@ export default function DashboardNavbar({
     </header>
   );
 }
-

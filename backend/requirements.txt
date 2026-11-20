@@ -11,3 +11,5 @@ tensorflow>=2.16.0
 scikit-learn>=1.4.0
 python-multipart>=0.0.9
 argon2-cffi>=23.1.0
+python-dotenv>=1.0.0
+

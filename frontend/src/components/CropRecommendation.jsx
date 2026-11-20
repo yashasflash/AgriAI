@@ -48,6 +48,7 @@ export default function CropRecommendation() {
 
   return (
     <div
+      className="agri-feature-card"
       style={{
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(20px)',
@@ -118,7 +119,7 @@ export default function CropRecommendation() {
         {/* Left Side: Input Fields Grid */}
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
           {/* Row 1: Nitrogen, Phosphorus, Potassium */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 85px), 1fr))', gap: '0.5rem' }}>
             <div style={{ background: '#f8fafc', padding: '0.45rem 0.6rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
               <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '2px' }}>
                 <span>🌾</span> Nitrogen (N)
@@ -172,7 +173,7 @@ export default function CropRecommendation() {
           </div>
 
           {/* Row 2: Temperature, Humidity, Soil pH */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 85px), 1fr))', gap: '0.5rem' }}>
             <div style={{ background: '#f8fafc', padding: '0.45rem 0.6rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
               <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '2px' }}>
                 <span>🌡️</span> Temp (°C)

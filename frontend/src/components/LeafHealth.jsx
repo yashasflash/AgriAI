@@ -57,6 +57,7 @@ export default function LeafHealth() {
 
   return (
     <div
+      className="agri-feature-card"
       style={{
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(20px)',

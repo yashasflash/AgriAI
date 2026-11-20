@@ -40,7 +40,26 @@ export default function RegisterPage({ onLogin, onNavigate, onBack }) {
       onLogin(res.user);
     } catch (err) {
       console.warn('Registration error:', err);
-      setErrorMsg(err.message || 'An account with this name already exists.');
+      const rawMsg = err.message || '';
+      const status = err.status;
+      const isNetwork =
+        err.isNetworkError ||
+        rawMsg.toLowerCase().includes('failed to fetch') ||
+        rawMsg.toLowerCase().includes('network') ||
+        rawMsg.toLowerCase().includes('refused');
+
+      if (isNetwork) {
+        setErrorMsg('AgriAI backend is not reachable. Please ensure the backend service is running.');
+      } else if (
+        status === 400 ||
+        rawMsg.toLowerCase().includes('already exists') ||
+        rawMsg.toLowerCase().includes('duplicate') ||
+        rawMsg.toLowerCase().includes('unique')
+      ) {
+        setErrorMsg(t.auth?.errorExists || 'An account with this name already exists.');
+      } else {
+        setErrorMsg(err.detail || rawMsg || 'Registration failed. Please try another name.');
+      }
     } finally {
       setLoading(false);
     }

@@ -1,11 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-export default defineConfig({
+// https://vite.dev/config/
+export default defineConfig(({ command }) => ({
   plugins: [react()],
-  base: "/AgriAI/",
+  // Use relative base so dist can be previewed directly
+  base: "./",
   server: {
-    port: 3000,
+    port: 5173,
     open: true,
   },
-})
+}))

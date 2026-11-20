@@ -5,7 +5,7 @@
   "type": "module",
   "description": "AgriAI — Offline AI Farming Intelligence Frontend",
   "scripts": {
-    "dev": "vite --port 3000",
+    "dev": "vite --port 5173",
     "build": "vite build",
     "preview": "vite preview"
   },

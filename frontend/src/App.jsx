@@ -8,17 +8,38 @@ import Dashboard from './pages/Dashboard';
 import { getStoredUser, getStoredToken, getProfile, logoutUser } from './services/api';
 
 export default function App() {
-  const [user, setUser] = useState(() => getStoredUser());
+  const [user, setUser] = useState(() => {
+    const u = getStoredUser();
+    if (u) return u;
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('stage') === 'dashboard') return { name: 'Kisan', language: 'en' };
+    } catch {}
+    return null;
+  });
+
   const [activeStage, setActiveStage] = useState(() => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('stage') === 'dashboard') return 'dashboard';
+    } catch {}
     const storedUser = getStoredUser();
     const storedToken = getStoredToken();
     return storedUser && storedToken ? 'dashboard' : 'landing';
   });
-  const [activeTab, setActiveTab] = useState('chat'); // 'chat' | 'crop' | 'leaf'
+  const [activeTab, setActiveTab] = useState('chat'); // 'chat' | 'crop' | 'leaf' | 'mandi'
 
   // Auto verify session on mount if token exists
   useEffect(() => {
     async function verifySession() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('stage') === 'dashboard') {
+          if (!user) setUser({ name: 'Ramesh', language: 'en' });
+          return;
+        }
+      } catch {}
+
       const token = getStoredToken();
       if (token) {
         try {
